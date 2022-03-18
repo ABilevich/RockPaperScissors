@@ -1,0 +1,19 @@
+{
+	"name": "ratherlabschalenge",
+	"version": "1.0.0",
+	"description": "A simple multiplayer Rock Paper Scissors game",
+	"main": "app.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "nodemon app.js"
+	},
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"express": "^4.17.3",
+		"socket.io": "^4.4.1"
+	},
+	"devDependencies": {
+		"prettier": "2.6.0"
+	}
+}
