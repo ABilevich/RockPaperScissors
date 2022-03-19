@@ -5,11 +5,34 @@
 		<link rel="stylesheet" type="text/css" href="/css/styles.css" />
 	</head>
 	<body>
-		<div id="console">
-			<ul id="messages"></ul>
-		</div>
-		<div id='game-area'>
-			<button onclick="startMatchmaking()">Search Match</button>
+		<div class="container">
+			<div class="console">
+				<ul id="messages"></ul>
+			</div> 
+			<div class="game-area">
+				<div class="player-info-area">
+					<div class="user-data">
+						<h2>Username: </h2><h2 id="userNameText"></h2>
+					</div>
+					<div class="user-data">
+						<h2>Time Played: </h2><h2 id="timePlayedText"></h2>
+					</div>
+					<div class="user-data">
+						<h2>Win Count: </h2><h2 id="winCountText"></h2>
+					</div>
+					<div class="user-data">
+						<h2>Win Streak: </h2><h2 id="winStreakText"></h2>
+					</div>
+					<div class="user-data">
+						<h2>Elo: </h2><h2 id="eloText"></h2>
+					</div>
+				</div>
+				<div class="matchmaking-area">
+					<button onclick="startMatchmaking()">Search Match</button>
+					<button onclick="cancelMatchMaking()">Cancel MatchMaking</button>
+				</div>
+				<div class="gameplay-area"></div>
+			</div>
 		</div>
 
 		<div id="login-modal" class="modal">

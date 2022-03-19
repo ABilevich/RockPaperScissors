@@ -31,10 +31,19 @@ function checkPlayerLoogin(data) {
 	console.log("got login response");
 	if (data.type == "success") {
 		modal.style.display = "none";
+		fillPlayerData(data.data);
 		displayServerMessage(data.message);
 	} else {
 		alert(data.message);
 	}
+}
+
+function fillPlayerData(playerData) {
+	document.getElementById("userNameText").innerText = playerData.name;
+	document.getElementById("timePlayedText").innerText = playerData.timePlayed;
+	document.getElementById("winCountText").innerText = playerData.winCount;
+	document.getElementById("winStreakText").innerText = playerData.winStreak;
+	document.getElementById("eloText").innerText = playerData.elo;
 }
 
 function startMatchmaking() {

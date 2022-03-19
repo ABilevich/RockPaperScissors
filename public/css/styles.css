@@ -1,16 +1,93 @@
+html,
 body {
+	margin: 0px;
+	height: 100%;
+	width: 100%;
+}
+
+body {
+	height: 100%;
+	width: 100%;
 	margin: 0;
 	color: #fff;
-	padding-bottom: 3rem;
-	background-color: #121212;
+	background-color: #000000;
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 		Helvetica, Arial, sans-serif;
 }
 
-#console {
+.container {
+	display: flex;
+	width: 100%;
 	height: 100%;
-	width: 500px;
+	/* background-color: green; */
 }
+
+.console {
+	background-color: #121212;
+	width: 25%;
+	height: 100%;
+}
+
+#messages {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+#messages > li {
+	padding: 0.5rem 1rem;
+}
+#messages > li:nth-child(odd) {
+	background: #000000;
+}
+
+.game-area {
+	display: inline;
+	/* background-color: pink; */
+	/* height: 100%; */
+	width: 75%;
+	height: 100%;
+}
+
+.player-info-area {
+	display: flex;
+	/* background-color: blue; */
+	height: 15%;
+	width: 100%;
+}
+
+.user-data {
+	width: 20%;
+	height: 100%;
+	padding-left: 5%;
+	/* background-color: orange; */
+}
+
+.matchmaking-area {
+	padding-left: 35%;
+	/* background-color: red; */
+	height: 7%;
+	width: 65%;
+}
+
+.matchmaking-area > button {
+	margin: 10px;
+	background-color: #121212; /* Green */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+}
+
+.gameplay-area {
+	/* background-color: orange; */
+	height: 78%;
+	width: 100%;
+}
+
+/* ----------------------FORM----------------------  */
 
 #form {
 	background: #121212;
@@ -30,6 +107,7 @@ body {
 #input:focus {
 	outline: none;
 }
+
 #form > button {
 	background: #000000;
 	color: #fff;
@@ -38,18 +116,6 @@ body {
 	margin: 0.25rem;
 	border-radius: 3px;
 	outline: none;
-}
-
-#messages {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-}
-#messages > li {
-	padding: 0.5rem 1rem;
-}
-#messages > li:nth-child(odd) {
-	background: #000000;
 }
 
 /* ----------------------MODAL----------------------  */

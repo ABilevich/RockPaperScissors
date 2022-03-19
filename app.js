@@ -50,11 +50,13 @@ function getPlayer(name) {
 
 function LoginOrCreatePlayer(name, socketId) {
 	let player = players.get(name);
+	console.log("login player: ".player);
 	if (player) {
 		if (player.isLoggedIn) {
 			return null;
 		}
-		player.isLoggedIn = true;
+		player.isLoggedIn = true; //log him in
+		player.socketId = socketId; // update socket id
 		return player;
 	}
 	return createNewPlayer(name, socketId);
@@ -62,48 +64,75 @@ function LoginOrCreatePlayer(name, socketId) {
 
 function getPlayerBySocket(socketId) {
 	const values = Array.from(players.values());
-	const player = values.filter((auxPlayer) => auxPlayer.socketId != socketId);
-	if (player.length) return player[0];
+	const filteredPlayers = values.filter(
+		(auxPlayer) => auxPlayer.socketId === socketId
+	);
+	if (filteredPlayers.length) return filteredPlayers[0];
 	return null;
 }
 
-function usernameIsValid() {
-	return true;
+function usernameIsValid(str) {
+	return /^[a-zA-Z]+$/.test(str);
 }
 
 function setupSockets() {
 	io.on("connection", (socket) => {
 		console.log("a user connected");
-		socket.on("disconnect", (data) => {
-			console.log("user disconnected", data);
-			const player = getPlayerBySocket(socket.id);
-			player.isLoggedIn = false; //log out user
-			if (player) mm.handleDisconnect(player); //handle his disconnect
-		});
-		socket.on("userLogin", (userName) => {
-			if (!usernameIsValid()) io.emit("serverError", "invalid user name");
-			const playerData = LoginOrCreatePlayer(userName, socket.id);
-			if (playerData) {
-				io.to(socket.id).emit("loginResponse", {
-					message: `user ${userName} logged in.`,
-					type: "success",
-					data: playerData
-				});
-			} else {
-				io.to(socket.id).emit("loginResponse", {
-					message: `user ${userName} is allready logged in`,
-					type: "error",
-					data: null
-				});
-			}
-			console.log(`player ${userName} logged in.`);
-		});
-		socket.on("startMatchMaking", async (userName) => {
-			const player = getPlayer(userName);
-			console.log(`player ${userName} entered matchmaking`);
-			mm.findMatch(player);
-		});
+		socket.on("disconnect", () => handleUserDisconnect(socket));
+		socket.on("userLogin", (userName) =>
+			handleUserLoggin(userName, socket)
+		);
+		socket.on("startMatchMaking", async (userName) =>
+			handleStartMatchmaking(userName, socket)
+		);
 	});
+}
+
+function handleUserLoggin(userName, socket) {
+	//validate username
+	if (!usernameIsValid(userName)) {
+		io.to(socket.id).emit("loginResponse", {
+			message: `user ${userName} is invalid`,
+			type: "error",
+			data: null
+		});
+		return;
+	}
+
+	//get existing player and log him in ore create new player
+	const playerData = LoginOrCreatePlayer(userName, socket.id);
+	console.log(Array.from(players.values()));
+
+	if (playerData) {
+		io.to(socket.id).emit("loginResponse", {
+			message: `user ${userName} logged in.`,
+			type: "success",
+			data: { ...playerData, elo: playerData.elo() }
+		});
+	} else {
+		io.to(socket.id).emit("loginResponse", {
+			message: `user ${userName} is allready logged in`,
+			type: "error",
+			data: null
+		});
+	}
+	console.log(`player ${userName} logged in.`);
+}
+
+function handleUserDisconnect(socket) {
+	console.log("socket disconnected", socket);
+	console.log(Array.from(players.values()));
+	const player = getPlayerBySocket(socket.id);
+	if (player) {
+		player.isLoggedIn = false; //log out user
+		mm.handleDisconnect(player); //handle his disconnect
+	}
+}
+
+function handleStartMatchmaking(userName, socket) {
+	const player = getPlayer(userName);
+	console.log(`player ${userName} entered matchmaking`);
+	mm.findMatch(player);
 }
 
 function setUpExpress() {
