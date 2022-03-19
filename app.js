@@ -9,7 +9,8 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 
 const MatchMaker = require("./server/MatchMaker");
-const Player = require("./server/Player");
+const GameManager = require("./server/GameManager");
+const Player = require("./server/classes/Player");
 const { isNullOrUndefined } = require("util");
 const { EOL } = require("os");
 
@@ -29,6 +30,8 @@ function initializeServer() {
 	console.log("Setting up MatchMaker...");
 	mm = new MatchMaker(io);
 	mm.initialize();
+	console.log("Setting up GameManager...");
+	gm = new GameManager(io);
 }
 
 function setDefaultState() {
@@ -88,6 +91,7 @@ function setupSockets() {
 		socket.on("cancelMatchmaking", async (userName) =>
 			handleCancelMatchmaking(userName, socket)
 		);
+		socket.on("playerMove", async (data) => handlePlayerMove(data));
 	});
 }
 
@@ -142,6 +146,10 @@ function handleCancelMatchmaking(userName, socket) {
 	const player = getPlayer(userName);
 	console.log(`player ${userName} canceled matchmaking`);
 	mm.handleCancelMatchMaking(player);
+}
+
+function handlePlayerMove(data) {
+	this.gm.playerMadeMove(data);
 }
 
 function setUpExpress() {

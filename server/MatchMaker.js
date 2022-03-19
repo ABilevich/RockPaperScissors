@@ -1,5 +1,5 @@
 const BSTQueue = require("./BSTQueue");
-const player = require("./Player");
+const Player = require("./classes/Player");
 
 class MatchMaker {
 	constructor(io) {
