@@ -13,6 +13,9 @@ const Player = require("./server/Player");
 const { isNullOrUndefined } = require("util");
 const { EOL } = require("os");
 
+const dotenv = require("dotenv");
+dotenv.config();
+
 let mm = null;
 
 const players = new Map();
@@ -25,6 +28,7 @@ function initializeServer() {
 	setupSockets();
 	console.log("Setting up MatchMaker...");
 	mm = new MatchMaker(io);
+	mm.initialize();
 }
 
 function setDefaultState() {
@@ -40,7 +44,11 @@ function createNewPlayer(name, socketId) {
 	return newPlayer;
 }
 
-function getOrCreatePlayer(name, socketId) {
+function getPlayer(name) {
+	return players.get(name);
+}
+
+function LoginOrCreatePlayer(name, socketId) {
 	let player = players.get(name);
 	if (player) {
 		if (player.isLoggedIn) {
@@ -69,11 +77,12 @@ function setupSockets() {
 		socket.on("disconnect", (data) => {
 			console.log("user disconnected", data);
 			const player = getPlayerBySocket(socket.id);
-			if (player) mm.handleDisconnect(player);
+			player.isLoggedIn = false; //log out user
+			if (player) mm.handleDisconnect(player); //handle his disconnect
 		});
 		socket.on("userLogin", (userName) => {
 			if (!usernameIsValid()) io.emit("serverError", "invalid user name");
-			const playerData = getOrCreatePlayer(userName, socket.id);
+			const playerData = LoginOrCreatePlayer(userName, socket.id);
 			if (playerData) {
 				io.to(socket.id).emit("loginResponse", {
 					message: `user ${userName} logged in.`,
@@ -90,7 +99,7 @@ function setupSockets() {
 			console.log(`player ${userName} logged in.`);
 		});
 		socket.on("startMatchMaking", async (userName) => {
-			const player = getOrCreatePlayer(userName, socket.id);
+			const player = getPlayer(userName);
 			console.log(`player ${userName} entered matchmaking`);
 			mm.findMatch(player);
 		});
@@ -100,12 +109,8 @@ function setupSockets() {
 function setUpExpress() {
 	app.use(express.static(__dirname + "/public"));
 
-	// app.get("/", (req, res) => {
-	// 	res.sendFile(__dirname + "/public/index.html");
-	// });
-
-	server.listen(3000, () => {
-		console.log("listening on port 3000");
+	server.listen(process.env.PORT, () => {
+		console.log(`listening on port ${process.env.PORT}`);
 	});
 }
 

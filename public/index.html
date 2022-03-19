@@ -5,18 +5,19 @@
 		<link rel="stylesheet" type="text/css" href="/css/styles.css" />
 	</head>
 	<body>
-		<div class="console">
+		<div id="console">
 			<ul id="messages"></ul>
 		</div>
-		<div>
+		<div id='game-area'>
 			<button onclick="startMatchmaking()">Search Match</button>
 		</div>
 
-		<div id="loginModal" class="modal">
+		<div id="login-modal" class="modal">
 		<div class="modal-content">
+			<h2>Please enter your name:</h2>
 			<form id="form" action="">
 				<input id="input" autocomplete="off" />
-				<button>Send</button>
+				<button>Submit</button>
 			</form>
 		</div>
 

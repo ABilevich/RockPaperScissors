@@ -5,7 +5,7 @@ var input = document.getElementById("input");
 
 let playerName = null;
 
-var modal = document.getElementById("loginModal");
+var modal = document.getElementById("login-modal");
 modal.style.display = "block";
 
 form.addEventListener("submit", function (e) {

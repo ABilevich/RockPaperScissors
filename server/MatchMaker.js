@@ -1,11 +1,6 @@
 const BSTQueue = require("./BSTQueue");
 const player = require("./Player");
 
-const STARTING_RETRIES = 3;
-const POTENTIAL_OPONENT_TIMER = 10000;
-const RETRY_TIMER = 5000;
-const MAX_ELO_DIFERENCE = 45;
-
 class MatchMaker {
 	constructor(io) {
 		this.socketIo = io;
@@ -14,7 +9,7 @@ class MatchMaker {
 	}
 
 	initialize() {
-		console.log("MatchMaker running");
+		console.log("MatchMaker running" + process.env.STARTING_RETRIES);
 	}
 
 	isPlayerOnQueue(player) {
@@ -49,7 +44,10 @@ class MatchMaker {
 				return bestMatch;
 			}
 			//if eloDif is acceptable, start match
-			if (this.calcEloDif(player, bestMatch) < MAX_ELO_DIFERENCE) {
+			if (
+				this.calcEloDif(player, bestMatch) <
+				process.env.MAX_ELO_DIFERENCE
+			) {
 				console.log("starting match with ", bestMatch.name);
 				return bestMatch;
 			} else {
@@ -81,7 +79,7 @@ class MatchMaker {
 
 			this.notifyPlayer(oponent, `Oponent unavailable...`);
 			//old player will lose its matchmaking, so lets start it again
-			setTimeout(() => this.findMatch(oponent), RETRY_TIMER);
+			setTimeout(() => this.findMatch(oponent), process.env.RETRY_TIMER);
 
 			this.startMatch(player, betterOponent);
 		} else {
@@ -111,7 +109,7 @@ class MatchMaker {
 		const oponent = this.findOponentInQueue(player, true);
 		if (!oponent) {
 			console.log(`no oponents available for ${player.name}`);
-			setTimeout(() => this.findMatch(player), RETRY_TIMER);
+			setTimeout(() => this.findMatch(player), process.env.RETRY_TIMER);
 		} else {
 			this.notifyPlayer(player, `Starting match agains ${oponent.name}`);
 			this.notifyPlayer(oponent, `Starting match agains ${player.name}`);
@@ -130,14 +128,14 @@ class MatchMaker {
 		this.notifyPlayer(player2, `You Lost... elo is now ${player2.elo()}`);
 	}
 
-	async findMatch(player, retries = STARTING_RETRIES) {
+	async findMatch(player, retries = process.env.STARTING_RETRIES) {
 		//if it's the firt time, add myself to queue
-		if (retries === STARTING_RETRIES) {
+		if (retries === process.env.STARTING_RETRIES) {
 			this.notifyPlayer(player, "Starting matchmaking");
 			console.log(`adding ${player.name} to player queue`);
 			this.addPlayerToQueue(player);
 			//wait in case anyone is looking fr an ooponent
-			await this.waitFor(RETRY_TIMER);
+			await this.waitFor(process.env.RETRY_TIMER);
 		}
 
 		console.log(
@@ -167,7 +165,7 @@ class MatchMaker {
 			//recheck after POTENTIAL_OPONENT_TIMER, if no better oponent is found, match will start
 			setTimeout(
 				() => this.findBetterOponentOrStartMatch(player, oponent),
-				POTENTIAL_OPONENT_TIMER
+				process.env.POTENTIAL_OPONENT_TIMER
 			);
 			return;
 		}
@@ -177,15 +175,18 @@ class MatchMaker {
 			this.notifyPlayer(
 				player,
 				`Couldn't find oponent... retriyng in ${
-					RETRY_TIMER / 1000
+					process.env.RETRY_TIMER / 1000
 				} seconds`
 			);
 			console.log(
 				`coudent find oponent for ${player.name}... retrying in ${
-					RETRY_TIMER / 1000
+					process.env.RETRY_TIMER / 1000
 				} seconds`
 			);
-			setTimeout(() => this.findMatch(player, retries - 1), RETRY_TIMER);
+			setTimeout(
+				() => this.findMatch(player, retries - 1),
+				process.env.RETRY_TIMER
+			);
 		} else {
 			//if no retries are available, remove me from matchmaking and force a match with any player
 			this.removePlayerFromQueue(player);
@@ -195,6 +196,7 @@ class MatchMaker {
 	}
 
 	notifyPlayer(player, message) {
+		console.log(player, message);
 		this.socketIo.to(player.socketId).emit("serverMessage", message);
 	}
 
