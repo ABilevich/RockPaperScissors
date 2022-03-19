@@ -2,10 +2,10 @@ const BSTQueue = require("./BSTQueue");
 const Player = require("./classes/Player");
 
 class MatchMaker {
-	constructor(io) {
+	constructor(io, gm) {
 		this.socketIo = io;
 		this.gameQueue = new BSTQueue();
-		this.gameRooms = new Map();
+		this.gm = gm;
 	}
 
 	initialize() {
@@ -103,8 +103,9 @@ class MatchMaker {
 		console.log(
 			`starting match between ${player1.name} and ${player2.name}`
 		);
-		this.simulateMatch(player1, player2);
-		//TODO
+
+		//this.simulateMatch(player1, player2);
+		this.gm.createRoom(player1, player2);
 	}
 
 	startForcedMatch(player) {

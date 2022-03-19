@@ -94,8 +94,33 @@ body {
 
 .gameplay-area {
 	/* background-color: orange; */
-	height: 78%;
+	height: 70%;
 	width: 100%;
+}
+
+.game-message {
+	background-color: #121212;
+	height: 30%;
+	width: 100%;
+}
+
+.game-buttons {
+	height: 25%;
+	width: 100%;
+	padding-left: 35%;
+	padding-top: 5%;
+}
+
+.game-buttons > button {
+	margin: 10px;
+	background-color: #121212; /* Green */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
 }
 
 /* ----------------------FORM----------------------  */

@@ -15,6 +15,7 @@ const { isNullOrUndefined } = require("util");
 const { EOL } = require("os");
 
 const dotenv = require("dotenv");
+const { timeStamp } = require("console");
 dotenv.config();
 
 let mm = null;
@@ -27,11 +28,11 @@ function initializeServer() {
 	setUpExpress();
 	console.log("Setting up Sockets...");
 	setupSockets();
-	console.log("Setting up MatchMaker...");
-	mm = new MatchMaker(io);
-	mm.initialize();
 	console.log("Setting up GameManager...");
 	gm = new GameManager(io);
+	console.log("Setting up MatchMaker...");
+	mm = new MatchMaker(io, gm);
+	mm.initialize();
 }
 
 function setDefaultState() {
@@ -149,7 +150,10 @@ function handleCancelMatchmaking(userName, socket) {
 }
 
 function handlePlayerMove(data) {
-	this.gm.playerMadeMove(data);
+	console.log("handlePlayerMove", data);
+	const player = players.get(data.playerName);
+	if (!player) return;
+	this.gm.playerMadeMove(data.roomUuid, player, data.move);
 }
 
 function setUpExpress() {

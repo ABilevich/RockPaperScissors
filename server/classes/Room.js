@@ -16,6 +16,8 @@ class Room {
 		let roundData = this.rounds[this.currentRound];
 
 		//get both players move
+		console.log("ads", this.rounds);
+		console.log("asdasd", this.rounds[this.currentRound]);
 		const player1Move = roundData.get(this.player1.name);
 		const player2Move = roundData.get(this.player1.name);
 
@@ -48,12 +50,14 @@ class Room {
 	}
 
 	playerMadeMove(player, move) {
+		console.log("playerMadeMove", player, move);
 		//get existing round data
 		let roundData = this.rounds[this.currentRound];
 		//if its first move, create moove map
 		if (!roundData) roundData = new Map();
 		//fil map with player move
 		roundData.set(player.name, move);
+		console.log("roundDataIs", roundData);
 		//save no rounds array
 		this.rounds[this.currentRound] = roundData;
 	}
