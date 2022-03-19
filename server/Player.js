@@ -6,6 +6,8 @@ class player {
 		this.winStreak = 0;
 		this.socketId = socketId;
 		this.isLoggedIn = true;
+		this.retryTimeout = null;
+		this.isOnQueue = false;
 	}
 
 	elo() {

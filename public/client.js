@@ -21,10 +21,13 @@ socket.on("serverMessage", (msg) => displayServerMessage(msg));
 socket.on("loginResponse", (data) => checkPlayerLoogin(data));
 
 function displayServerMessage(msg) {
-	var item = document.createElement("li");
+	let item = document.createElement("li");
 	item.textContent = msg;
 	messages.appendChild(item);
 	window.scrollTo(0, document.body.scrollHeight);
+	//auto scroll to bottom
+	let elem = document.getElementById("console");
+	elem.scrollTop = elem.scrollHeight;
 }
 
 function checkPlayerLoogin(data) {
@@ -51,5 +54,11 @@ function startMatchmaking() {
 		socket.emit("startMatchMaking", playerName);
 	} else {
 		alert("you must enter a name");
+	}
+}
+
+function cancelMatchMaking() {
+	if (playerName) {
+		socket.emit("cancelMatchmaking", playerName);
 	}
 }

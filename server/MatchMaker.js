@@ -13,7 +13,8 @@ class MatchMaker {
 	}
 
 	isPlayerOnQueue(player) {
-		return this.gameQueue.has(player);
+		return player.isOnQueue; //saving state on payer object for fast response
+		// return this.gameQueue.has(player);
 	}
 
 	addPlayerToQueue(player) {
@@ -21,10 +22,12 @@ class MatchMaker {
 		if (this.isPlayerOnQueue(player)) return;
 		//add player to queue
 		this.gameQueue.insert(player);
+		player.isOnQueue = true;
 	}
 
 	removePlayerFromQueue(player) {
 		this.gameQueue.remove(player);
+		player.isOnQueue = false;
 	}
 
 	findOponentInQueue(player, forced = false) {
@@ -131,11 +134,17 @@ class MatchMaker {
 	async findMatch(player, retries = process.env.STARTING_RETRIES) {
 		//if it's the firt time, add myself to queue
 		if (retries === process.env.STARTING_RETRIES) {
+			if (this.isPlayerOnQueue(player)) {
+				//if player is allready in matchmaking
+				this.notifyPlayer(player, "Matchmaking already started");
+				return;
+			}
 			this.notifyPlayer(player, "Starting matchmaking");
 			console.log(`adding ${player.name} to player queue`);
 			this.addPlayerToQueue(player);
 			//wait in case anyone is looking fr an ooponent
 			await this.waitFor(process.env.RETRY_TIMER);
+			if (!this.isPlayerOnQueue(player)) return; //if in that time, the player canceled matchmaking, exit.
 		}
 
 		console.log(
@@ -183,7 +192,7 @@ class MatchMaker {
 					process.env.RETRY_TIMER / 1000
 				} seconds`
 			);
-			setTimeout(
+			player.retryTimeout = setTimeout(
 				() => this.findMatch(player, retries - 1),
 				process.env.RETRY_TIMER
 			);
@@ -195,12 +204,26 @@ class MatchMaker {
 		}
 	}
 
+	handleCancelMatchMaking(player) {
+		if (this.isPlayerOnQueue(player)) {
+			if (player.retryTimeout) clearTimeout(player.retryTimeout); //stop retry timeoout
+			this.removePlayerFromQueue(player);
+			this.notifyPlayer(player, "Matchmaking stoped...");
+		} else {
+			this.notifyPlayer(
+				player,
+				"Cant stop matchmaking, match already started..."
+			);
+		}
+	}
+
 	notifyPlayer(player, message) {
 		console.log(player, message);
 		this.socketIo.to(player.socketId).emit("serverMessage", message);
 	}
 
 	handleDisconnect(player) {
+		if (player.retryTimeout) clearTimeout(player.retryTimeout); //stop retry timeoout
 		this.removePlayerFromQueue(player);
 		//TODO: if match had allready started, notify
 	}

@@ -85,6 +85,9 @@ function setupSockets() {
 		socket.on("startMatchMaking", async (userName) =>
 			handleStartMatchmaking(userName, socket)
 		);
+		socket.on("cancelMatchmaking", async (userName) =>
+			handleCancelMatchmaking(userName, socket)
+		);
 	});
 }
 
@@ -133,6 +136,12 @@ function handleStartMatchmaking(userName, socket) {
 	const player = getPlayer(userName);
 	console.log(`player ${userName} entered matchmaking`);
 	mm.findMatch(player);
+}
+
+function handleCancelMatchmaking(userName, socket) {
+	const player = getPlayer(userName);
+	console.log(`player ${userName} canceled matchmaking`);
+	mm.handleCancelMatchMaking(player);
 }
 
 function setUpExpress() {
