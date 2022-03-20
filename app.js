@@ -67,7 +67,12 @@ function getPlayerBySocket(socketId) {
 }
 
 function usernameIsValid(str) {
-	return /^[a-zA-Z]+$/.test(str); //check if username is only letters
+	const isBoot =
+		/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
+			str
+		);
+	const isValidUser = /^[a-zA-Z]+$/.test(str);
+	return isBoot || isValidUser; //check if username letters or uuid
 }
 
 function setupSockets() {
@@ -143,7 +148,7 @@ function handlePlayerMove(data) {
 	console.log("handlePlayerMove", data);
 	const player = players.get(data.playerName);
 	if (!player) return;
-	this.gm.playerMadeMove(data.roomUuid, player, data.move);
+	gm.playerMadeMove(data.roomUuid, player, data.move);
 }
 
 function setUpExpress() {
