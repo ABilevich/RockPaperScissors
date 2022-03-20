@@ -53,10 +53,12 @@ class Room {
 	//rock -> scissors -> paper -> rock
 	// 1         2          3        1
 	getWinningPlayer(player1Move, player2Move) {
+		if (player1Move && !player2Move) return this.player1;
+		if (player2Move && !player1Move) return this.player2;
 		if (player1Move === player2Move) {
 			return null; //draw
 		} else if (
-			player1Move === player2Move + 1 ||
+			player1Move + 1 === player2Move ||
 			player1Move - 2 === player2Move
 		) {
 			return this.player1; //player1 won
@@ -65,7 +67,6 @@ class Room {
 	}
 
 	playerMadeMove(player, move) {
-		console.log("playerMadeMove", player, move);
 		//get existing round data
 		let roundData = this.rounds[this.currentRound];
 		// if round is allready over, cancel move
@@ -110,22 +111,21 @@ class Room {
 
 	updatePlayerStats(gameWinner) {
 		const gameTime = this.getRoomDuration();
-		console.log("updatePlayerStats", gameWinner, gameTime);
-		if (this.player1.name === gameWinner) {
+		if (!gameWinner) {
+			this.player1.timePlayed += gameTime;
+			this.player2.timePlayed += gameTime;
+		} else if (this.player1.name === gameWinner.name) {
 			this.player1.timePlayed += gameTime;
 			this.player1.winCount += 1;
 			this.player1.winStreak += 1;
 			this.player2.timePlayed += gameTime;
 			this.player2.winStreak = 0;
-		} else if (this.player2.name === gameWinner) {
+		} else {
 			this.player2.timePlayed += gameTime;
 			this.player2.winCount += 1;
 			this.player2.winStreak += 1;
 			this.player1.timePlayed += gameTime;
 			this.player1.winStreak = 0;
-		} else {
-			this.player1.timePlayed += gameTime;
-			this.player2.timePlayed += gameTime;
 		}
 	}
 

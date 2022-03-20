@@ -42,6 +42,9 @@ socket.on("roundEnded", (data) => handleRoundEnded(data));
 socket.on("gameEnded", (data) => handleGameEnded(data));
 socket.on("eloChanged", (data) => handleElochanged(data));
 
+socket.on("playerCantCancel", () => handleCantCancel());
+socket.on("playerCanCancel", () => handleCanCancel());
+
 // --------------------- SOCKET HANDLERS -------------------------------
 function displayServerMessage(msg) {
 	let item = document.createElement("li");
@@ -65,6 +68,8 @@ function checkPlayerLoogin(data) {
 }
 
 function handleMatchData(data) {
+	document.getElementById("start-mm-button").style.visibility = "hidden";
+	document.getElementById("cancel-mm-button").style.visibility = "hidden";
 	updateGameMessage("Got game data");
 	console.log("Game data", data);
 	player1 = data.data.player1;
@@ -73,6 +78,7 @@ function handleMatchData(data) {
 	roomUuid = data.data.roomUuid;
 }
 function handleRoundStart(data) {
+	displayServerMessage("Round started");
 	document.getElementById("game-buttons").style.visibility = "visible";
 	gameIsOngoing = true;
 	currentRound = data.data.currentRound;
@@ -86,6 +92,7 @@ function handleTimeRemaining(data) {
 }
 
 function handleRoundEnded(data) {
+	displayServerMessage("Round ended");
 	console.log("got round end data: ", data);
 	gameIsOngoing = false;
 	if (data.data.winner) {
@@ -101,6 +108,7 @@ function handleRoundEnded(data) {
 	}
 }
 function handleGameEnded(data) {
+	displayServerMessage("Game ended");
 	document.getElementById("game-buttons").style.visibility = "hidden";
 	console.log("got game end data: ", data);
 	if (data.data.winner) {
@@ -112,13 +120,26 @@ function handleGameEnded(data) {
 	} else {
 		updateGameMessage(`Game ended: it was a draw!`);
 	}
+	setTimeout(() => this.clearDisplay(), 1000);
+	document.getElementById("start-mm-button").style.visibility = "visible";
+	document.getElementById("cancel-mm-button").style.visibility = "visible";
 }
 function handleElochanged(data) {
+	displayServerMessage("Your Elo changed!");
 	fillPlayerData(data.data);
+}
+
+function handleCantCancel() {
+	document.getElementById("cancel-mm-button").style.visibility = "hidden";
+}
+
+function handleCanCancel() {
+	document.getElementById("cancel-mm-button").style.visibility = "visible";
 }
 
 //-------------------------- EMMITS  -----------------------------------
 function startMatchmaking() {
+	document.getElementById("start-mm-button").style.visibility = "hidden";
 	if (playerName) {
 		socket.emit("startMatchMaking", playerName);
 	} else {
@@ -127,6 +148,7 @@ function startMatchmaking() {
 }
 
 function cancelMatchMaking() {
+	document.getElementById("start-mm-button").style.visibility = "visible";
 	if (playerName) {
 		socket.emit("cancelMatchmaking", playerName);
 	}
@@ -171,4 +193,9 @@ function chosePaper() {
 
 function choseScissoors() {
 	if (gameIsOngoing) emitPlayerMove(SCISSORS);
+}
+
+function clearDisplay() {
+	document.getElementById("gameText").innerText = "";
+	document.getElementById("roundCounter").innerText = "";
 }

@@ -16,6 +16,7 @@ const { EOL } = require("os");
 
 const dotenv = require("dotenv");
 const { timeStamp } = require("console");
+const { all } = require("express/lib/application");
 dotenv.config();
 
 let mm = null;
@@ -133,12 +134,14 @@ function handleUserDisconnect(socket) {
 
 function handleStartMatchmaking(userName, socket) {
 	const player = getPlayer(userName);
+	if (player.isMatching) return; //if player is matching, return
 	console.log(`player ${userName} entered matchmaking`);
 	mm.findMatch(player);
 }
 
 function handleCancelMatchmaking(userName, socket) {
 	const player = getPlayer(userName);
+	if (!player.isMatching) return; //if player is not matching, return
 	console.log(`player ${userName} canceled matchmaking`);
 	mm.handleCancelMatchMaking(player);
 }
@@ -152,6 +155,18 @@ function handlePlayerMove(data) {
 
 function setUpExpress() {
 	app.use(express.static(__dirname + "/public"));
+
+	app.get("/leaderboard", function (req, res) {
+		const allPlayers = Array.from(players.values());
+		const modifiedPlayerList = allPlayers.map((player) => ({
+			elo: player.elo(),
+			...player
+		}));
+		modifiedPlayerList.sort((p1, p2) => {
+			return p1.elo - p2.elo;
+		});
+		res.send(JSON.stringify(modifiedPlayerList));
+	});
 
 	server.listen(process.env.PORT, () => {
 		console.log(`listening on port ${process.env.PORT}`);

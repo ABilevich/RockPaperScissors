@@ -9,6 +9,7 @@ class Player {
 		this.retryTimeout = null;
 		this.isOnQueue = false;
 		this.roomUuid = null;
+		this.isMatching = false;
 	}
 
 	elo() {

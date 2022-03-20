@@ -80,10 +80,11 @@ class GameManager {
 	}
 
 	endGame(gameRoom) {
-		console.log("end game");
 		const gameResults = gameRoom.calculateGameResults();
 		this.notifyGameEnd(gameRoom.player1, gameResults);
 		this.notifyGameEnd(gameRoom.player2, gameResults);
+		gameRoom.player1.isMatching = false;
+		gameRoom.player2.isMatching = false;
 		this.closeRoom(gameRoom, gameResults.winner);
 	}
 

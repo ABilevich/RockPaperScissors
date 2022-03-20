@@ -67,21 +67,23 @@ class MatchMaker {
 
 	findBetterOponentOrStartMatch(player, oponent) {
 		const betterOponent = this.findOponentInQueue(player);
-		console.log(
-			`found another potential oponent for ${player.name} -> ${betterOponent.name}`
-		);
 		if (
 			betterOponent && //if there is another potential oponent
 			this.calcEloDif(player, betterOponent) <
 				this.calcEloDif(player, oponent) //with a closer elo diference
 		) {
+			console.log(
+				`found another potential oponent for ${player.name} -> ${betterOponent.name}`
+			);
 			this.notifyPlayer(player, `Found even better oponent!`);
 			console.log(
 				`new oponnent (${betterOponent.name}) for ${player.name} was better than before (${oponent.name})`
 			);
 			this.removePlayerFromQueue(betterOponent);
+			this.notifyPlayerCantCancel(betterOponent);
 
 			this.notifyPlayer(oponent, `Oponent unavailable...`);
+			this.notifyPlayerCanCancel(oponent);
 
 			//old player will lose its matchmaking, so lets start it again
 			setTimeout(() => this.findMatch(oponent), process.env.RETRY_TIMER);
@@ -140,16 +142,15 @@ class MatchMaker {
 		player1.winStreak += 1;
 		this.notifyPlayer(player1, `You Won!! new elo is now ${player1.elo()}`);
 		this.notifyPlayer(player2, `You Lost... elo is now ${player2.elo()}`);
+		this.player1.isMatching = false;
+		this.player1.isMatching = false;
 	}
 
 	async findMatch(player, retries = process.env.STARTING_RETRIES) {
+		//tag the player as matching
+		player.isMatching = true;
 		//if it's the firt time, add myself to queue
 		if (retries === process.env.STARTING_RETRIES) {
-			if (this.isPlayerOnQueue(player)) {
-				//if player is allready in matchmaking
-				this.notifyPlayer(player, "Matchmaking already started");
-				return;
-			}
 			this.notifyPlayer(player, "Starting matchmaking");
 			console.log(`adding ${player.name} to player queue`);
 			this.addPlayerToQueue(player);
@@ -163,6 +164,7 @@ class MatchMaker {
 			console.log(
 				`${player.name} disconnected or someone else found a match for him, stpping search`
 			);
+			player.isMatching = false;
 			return;
 		}
 
@@ -178,6 +180,8 @@ class MatchMaker {
 			//notify both players
 			this.notifyPlayer(player, `Found potential oponent...`);
 			this.notifyPlayer(oponent, `Found potential oponent...`);
+			this.notifyPlayerCantCancel(player);
+			this.notifyPlayerCantCancel(oponent);
 			//recheck after POTENTIAL_OPONENT_TIMER, if no better oponent is found, match will start
 			setTimeout(
 				() => this.findBetterOponentOrStartMatch(player, oponent),
@@ -215,6 +219,7 @@ class MatchMaker {
 		if (this.isPlayerOnQueue(player)) {
 			if (player.retryTimeout) clearTimeout(player.retryTimeout); //stop retry timeoout
 			this.removePlayerFromQueue(player);
+			player.isMatching = false;
 			this.notifyPlayer(player, "Matchmaking stoped...");
 		} else {
 			this.notifyPlayer(
@@ -226,6 +231,14 @@ class MatchMaker {
 
 	notifyPlayer(player, message) {
 		this.socketIo.to(player.socketId).emit("serverMessage", message);
+	}
+
+	notifyPlayerCantCancel(player) {
+		this.socketIo.to(player.socketId).emit("playerCantCancel");
+	}
+
+	notifyPlayerCanCancel(player) {
+		this.socketIo.to(player.socketId).emit("playerCanCancel");
 	}
 
 	handleDisconnect(player) {

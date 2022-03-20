@@ -81,17 +81,39 @@ class BSTQueue {
 		let found = false;
 		let fallback = null;
 
+		let smallest = null;
+
 		while (current && !found) {
 			if (value < current.value) {
+				//save thhe smallest node along the way
+				if (!smallest || smallest.value > current.value)
+					smallest = current;
 				if (current.left) {
-					fallback = current;
+					//fallback = current;
 					current = current.left;
-				} else found = current;
+				} else if (current.right) {
+					const smallestChild = this.kthSmallestNode(current.right);
+					if (!smallest || smallest.value > smallestChild.value)
+						smallest = smallestChild;
+					found = smallest;
+				} else {
+					found = smallest;
+				}
 			} else if (value > current.value) {
+				//save thhe smallest node along the way
+				if (!smallest || smallest.value > current.value)
+					smallest = current;
 				if (current.right) {
-					fallback = current;
+					//fallback = current;
 					current = current.right;
-				} else found = current;
+				} else if (current.left) {
+					const smallestChild = this.kthBiggestNode(current.left);
+					if (!smallest || smallest.value > smallestChild.value)
+						smallest = smallestChild;
+					found = smallest;
+				} else {
+					found = smallest;
+				}
 			} else {
 				if (
 					current.players.filter(
@@ -99,10 +121,26 @@ class BSTQueue {
 					).length > 0
 				)
 					found = current;
-				else if (current.right) current = current.right;
-				else if (current.left) current = current.left;
-				else if (fallback) found = fallback;
-				else current = null;
+				else {
+					if (current.right) {
+						const smallestRight = this.kthSmallestNode(
+							current.right
+						);
+						if (!smallest || smallest.value > smallestRight.value)
+							smallest = smallestRight;
+					}
+					if (current.left) {
+						const smallestLeft = this.kthBiggestNode(current.left);
+						if (!smallest || smallest.value > smallestLeft.value)
+							smallest = smallestLeft;
+					}
+					if (smallest) found = smallest;
+					else current = null;
+				}
+				// else if (current.right) current = current.right;
+				// else if (current.left) current = current.left;
+				// else if (fallback) found = fallback;
+				// else current = null;
 			}
 		}
 
@@ -112,20 +150,15 @@ class BSTQueue {
 		);
 	}
 
-	// this function calls removeNode
 	remove(player) {
 		const value = player.elo();
 		this.root = this.removeNode(this.root, value, player);
 	}
 
-	// a recursive function to insert a new value in binary search tree
 	removeNode(current, value, player) {
-		// base case, if the tree is empty
 		if (current === null) return current;
 
-		// when value is the same as current's value, this is the node to be deleted
 		if (value === current.value) {
-			// if there is more than one player on that value, remove without deleting
 			if (current.players.length > 1) {
 				current.players = current.players.filter(
 					(auxPlayer) => auxPlayer.name != player.name
@@ -133,7 +166,6 @@ class BSTQueue {
 				return current;
 			}
 
-			// for case 1 and 2, node without child or with one child
 			if (current.left === null && current.right === null) {
 				return null;
 			} else if (current.left === null) {
@@ -141,13 +173,10 @@ class BSTQueue {
 			} else if (current.right === null) {
 				return current.left;
 			} else {
-				/// node with two children, get the inorder successor,
-				//smallest in the right subtree
 				let tempNode = this.kthSmallestNode(current.right);
 				current.value = tempNode.value;
 				current.players = tempNode.players;
 
-				/// delete the inorder successor
 				current.right = this.removeNode(
 					current.right,
 					tempNode.value,
@@ -156,8 +185,6 @@ class BSTQueue {
 
 				return current;
 			}
-
-			// recur down the tree
 		} else if (value < current.value) {
 			current.left = this.removeNode(current.left, value, player);
 			return current;
@@ -168,9 +195,12 @@ class BSTQueue {
 	}
 
 	/// helper function to find the smallest node
-
 	kthSmallestNode(node) {
 		while (!node.left === null) node = node.left;
+		return node;
+	}
+	kthBiggestNode(node) {
+		while (!node.right === null) node = node.right;
 		return node;
 	}
 }
