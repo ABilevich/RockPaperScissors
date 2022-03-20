@@ -20,11 +20,11 @@ const { all } = require("express/lib/application");
 dotenv.config();
 
 let mm = null;
+let gm = null;
 
 const players = new Map();
 
 function initializeServer() {
-	setDefaultState();
 	console.log("Setting up express...");
 	setUpExpress();
 	console.log("Setting up Sockets...");
@@ -33,17 +33,10 @@ function initializeServer() {
 	gm = new GameManager(io);
 	console.log("Setting up MatchMaker...");
 	mm = new MatchMaker(io, gm);
-	mm.initialize();
-}
-
-function setDefaultState() {
-	createNewPlayer("Nik", null);
-	createNewPlayer("Jack", null);
-	createNewPlayer("Ana", null);
 }
 
 function createNewPlayer(name, socketId) {
-	console.log("created player " + name);
+	console.log(`Created player: ${name}`);
 	const newPlayer = new Player(name, socketId);
 	players.set(newPlayer.name, newPlayer);
 	return newPlayer;
@@ -74,12 +67,12 @@ function getPlayerBySocket(socketId) {
 }
 
 function usernameIsValid(str) {
-	return /^[a-zA-Z]+$/.test(str);
+	return /^[a-zA-Z]+$/.test(str); //check if username is only letters
 }
 
 function setupSockets() {
 	io.on("connection", (socket) => {
-		console.log("a user connected");
+		console.log("A client connected");
 		socket.on("disconnect", () => handleUserDisconnect(socket));
 		socket.on("userLogin", (userName) =>
 			handleUserLoggin(userName, socket)
@@ -156,11 +149,15 @@ function handlePlayerMove(data) {
 function setUpExpress() {
 	app.use(express.static(__dirname + "/public"));
 
+	//leaderbiard to featch player info
 	app.get("/leaderboard", function (req, res) {
 		const allPlayers = Array.from(players.values());
 		const modifiedPlayerList = allPlayers.map((player) => ({
 			elo: player.elo(),
-			...player
+			name: player.name,
+			timePlayed: player.timePlayed,
+			winCount: player.winCount,
+			winStreak: player.winStreak
 		}));
 		modifiedPlayerList.sort((p1, p2) => {
 			return p1.elo - p2.elo;

@@ -8,10 +8,6 @@ class MatchMaker {
 		this.gm = gm;
 	}
 
-	initialize() {
-		console.log("MatchMaker running" + process.env.STARTING_RETRIES);
-	}
-
 	isPlayerOnQueue(player) {
 		return player.isOnQueue; //saving state on payer object for fast response
 		// return this.gameQueue.has(player);
