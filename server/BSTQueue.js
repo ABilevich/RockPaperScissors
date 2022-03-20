@@ -86,14 +86,22 @@ class BSTQueue {
 		while (current && !found) {
 			if (value < current.value) {
 				//save thhe smallest node along the way
-				if (!smallest || smallest.value > current.value)
+				if (
+					!smallest ||
+					this.absDif(smallest.value, value) >
+						this.absDif(current.value, value)
+				)
 					smallest = current;
 				if (current.left) {
 					//fallback = current;
 					current = current.left;
 				} else if (current.right) {
 					const smallestChild = this.kthSmallestNode(current.right);
-					if (!smallest || smallest.value > smallestChild.value)
+					if (
+						!smallest ||
+						this.absDif(smallest.value, value) >
+							this.absDif(smallestChild.value, value)
+					)
 						smallest = smallestChild;
 					found = smallest;
 				} else {
@@ -101,14 +109,22 @@ class BSTQueue {
 				}
 			} else if (value > current.value) {
 				//save thhe smallest node along the way
-				if (!smallest || smallest.value > current.value)
+				if (
+					!smallest ||
+					this.absDif(smallest.value, value) >
+						this.absDif(current.value, value)
+				)
 					smallest = current;
 				if (current.right) {
 					//fallback = current;
 					current = current.right;
 				} else if (current.left) {
 					const smallestChild = this.kthBiggestNode(current.left);
-					if (!smallest || smallest.value > smallestChild.value)
+					if (
+						!smallest ||
+						this.absDif(smallest.value, value) >
+							this.absDif(smallestChild.value, value)
+					)
 						smallest = smallestChild;
 					found = smallest;
 				} else {
@@ -126,12 +142,20 @@ class BSTQueue {
 						const smallestRight = this.kthSmallestNode(
 							current.right
 						);
-						if (!smallest || smallest.value > smallestRight.value)
+						if (
+							!smallest ||
+							this.absDif(smallest.value, value) >
+								this.absDif(smallestRight.value, value)
+						)
 							smallest = smallestRight;
 					}
 					if (current.left) {
 						const smallestLeft = this.kthBiggestNode(current.left);
-						if (!smallest || smallest.value > smallestLeft.value)
+						if (
+							!smallest ||
+							this.absDif(smallest.value, value) >
+								this.absDif(smallestLeft.value, value)
+						)
 							smallest = smallestLeft;
 					}
 					if (smallest) found = smallest;
@@ -202,6 +226,10 @@ class BSTQueue {
 	kthBiggestNode(node) {
 		while (!node.right === null) node = node.right;
 		return node;
+	}
+
+	absDif(value1, value2) {
+		return Math.abs(value1 - value2);
 	}
 }
 
