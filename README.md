@@ -11,7 +11,7 @@ To run the server:
 >  npm run dev
 ```
 
-after running the server, open a browser tab with the following link:
+After running the server, open a browser tab with the following link:
 
 -   http://localhost:3000/
 
