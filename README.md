@@ -13,17 +13,26 @@ To run the server:
 >  npm run dev
 ```
 
-after running the server, open a browser tab with the folowing link:
+after running the server, open a browser tab with the following link:
 
 -   http://localhost:3000/
 
 Here you will be able to match against other opened browser tabs and play.
 
-Before starting the game, you need to chose a unique name made up of only leters.
+Before starting the game, you need to choose a unique name made up of only letters.
 
 The server also exposes an endpoint to fetch the current leaderboards:
 
 -   http://localhost:3000/leaderboard
+
+You can also add bots by moving to the folder named "bots" and running:
+
+```
+node .\spawnBot.js
+```
+
+This bot will start with an elo of 0 and play as any player would but with random moves
+After every match end, it will restart matchmaking
 
 Author: Andres Bilevich
 Contact: andresbilevich@gmail.com
