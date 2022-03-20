@@ -35,4 +35,5 @@ This bot will start with an elo of 0 and play as any player would but with rando
 After every match end, it will restart matchmaking
 
 Author: Andres Bilevich
+
 Contact: andresbilevich@gmail.com
