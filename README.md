@@ -2,8 +2,6 @@
 
 A simple multiplayer Rock Paper Scissors game
 
-This app was made for a challenge presented by Rather Labs
-
 It consists of a server that hosts a multiplayer Rock-Paper-Scissors game with elo based matchmaking.
 
 To run the server:
