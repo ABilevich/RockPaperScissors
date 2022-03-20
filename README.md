@@ -8,7 +8,10 @@ It consists of a server that hosts a multiplayer Rock-Paper-Scissors game with e
 
 To run the server:
 
--   npm run dev
+```
+>  npm install
+>  npm run dev
+```
 
 after running the server, open a browser tab with the folowing link:
 
