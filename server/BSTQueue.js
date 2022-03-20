@@ -17,27 +17,23 @@ class BSTQueue {
 		var newNode = new Node(value, player);
 		if (this.root === null) {
 			this.root = newNode;
-			console.log("done inserting, root now: ", this.root);
 			return this;
 		}
 		let current = this.root;
 		while (current) {
 			if (value === current.value) {
 				current.players.push(player);
-				console.log("done inserting, root now: ", this.root);
 				return;
 			}
 			if (value < current.value) {
 				if (current.left === null) {
 					current.left = newNode;
-					console.log("done inserting, root now: ", this.root);
 					return this;
 				}
 				current = current.left;
 			} else {
 				if (current.right === null) {
 					current.right = newNode;
-					console.log("done inserting, root now: ", this.root);
 					return this;
 				}
 				current = current.right;
@@ -79,8 +75,6 @@ class BSTQueue {
 	//it serches for the clsoest node to the node asked, taking int account players with the same elo
 	findClosest(player) {
 		const value = player.elo();
-		console.log(`finding closest to ${player.name} with elo ${value}`);
-		console.log("tree is ", this.root);
 		if (!this.root) return false;
 
 		let current = this.root;
@@ -112,8 +106,6 @@ class BSTQueue {
 			}
 		}
 
-		//console.log("found", found);
-
 		if (!found) return undefined;
 		return found.players.filter(
 			(auxPlayer) => auxPlayer.name != player.name
@@ -124,7 +116,6 @@ class BSTQueue {
 	remove(player) {
 		const value = player.elo();
 		this.root = this.removeNode(this.root, value, player);
-		console.log("done removing, root now: ", this.root);
 	}
 
 	// a recursive function to insert a new value in binary search tree

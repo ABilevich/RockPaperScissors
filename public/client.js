@@ -17,6 +17,8 @@ let totalRounds = null;
 let roomUuid = null;
 let currentRound = null;
 
+let gameIsOngoing = false;
+
 var modal = document.getElementById("login-modal");
 modal.style.display = "block";
 
@@ -64,12 +66,14 @@ function checkPlayerLoogin(data) {
 
 function handleMatchData(data) {
 	updateGameMessage("Got game data");
+	console.log("Game data", data);
 	player1 = data.data.player1;
 	player2 = data.data.player2;
 	totalRounds = data.data.totalRounds;
 	roomUuid = data.data.roomUuid;
 }
 function handleRoundStart(data) {
+	gameIsOngoing = true;
 	currentRound = data.data.currentRound;
 	updateRoundCounter();
 }
@@ -81,12 +85,24 @@ function handleTimeRemaining(data) {
 }
 
 function handleRoundEnded(data) {
-	updateGameMessage(`Round ended: ${data.data.winner} won this ruound`);
+	console.log("got round end data: ", data);
+	gameIsOngoing = false;
+	if (data.data.winner) {
+		updateGameMessage(`Round ended: ${data.data.winner} won this round`);
+	} else {
+		updateGameMessage(`Round ended: it was a draw!`);
+	}
 }
 function handleGameEnded(data) {
-	updateGameMessage(`Game ended: ${data.data.winner} won the game!`);
+	console.log("got game end data: ", data);
+	if (data.data.winner) {
+		updateGameMessage(`Game ended: ${data.data.winner} won the game!`);
+	} else {
+		updateGameMessage(`Game ended: it was a draw!`);
+	}
 }
 function handleElochanged(data) {
+	console.log("got ello change", data);
 	fillPlayerData(data.data);
 }
 

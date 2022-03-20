@@ -33,7 +33,6 @@ class MatchMaker {
 	findOponentInQueue(player, forced = false) {
 		console.log("finding oponent for: ", player.name);
 		const bestMatches = this.gameQueue.findClosest(player);
-		console.log("-->bestMatches", bestMatches);
 		if (bestMatches && bestMatches.length) {
 			const bestMatch = bestMatches[0];
 			console.log(

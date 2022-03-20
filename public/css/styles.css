@@ -99,6 +99,7 @@ body {
 }
 
 .game-message {
+	text-align: center;
 	background-color: #121212;
 	height: 30%;
 	width: 100%;

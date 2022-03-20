@@ -47,7 +47,7 @@ class GameManager {
 			clearTimeout(gameRoom.timeout);
 			gameRoom.timeout = null;
 		}
-		if (timeRemaining > 1) {
+		if (timeRemaining >= 1) {
 			//send mesage to playes so they chose an option
 			this.notifyTimeRemaining(gameRoom.player1, timeRemaining);
 			this.notifyTimeRemaining(gameRoom.player2, timeRemaining);
@@ -66,26 +66,32 @@ class GameManager {
 		if (gameRoom.currentRound < process.env.ROUNDS_PER_GAME) {
 			//if the game has more rounds remaining, start next round
 			gameRoom.currentRound += 1;
-			this.startRound(gameRoom);
+			setTimeout(
+				() => this.startRound(gameRoom),
+				process.env.TIME_BETWEEN_ROUNDS
+			);
 		} else {
 			//if no more runds remain, end game
-			this.endGame(gameRoom);
+			setTimeout(
+				() => this.endGame(gameRoom),
+				process.env.TIME_BETWEEN_ROUNDS
+			);
 		}
 	}
 
 	endGame(gameRoom) {
-		const winner = gameRoom.calculateGameResults();
-		this.notifyGameEnd(gameRoom.player1, winner);
-		this.notifyGameEnd(gameRoom.player2, winner);
-		this.closeRoom(gameRoom, winner);
+		const gameResults = gameRoom.calculateGameResults();
+		this.notifyGameEnd(gameRoom.player1, gameResults);
+		this.notifyGameEnd(gameRoom.player2, gameResults);
+		this.closeRoom(gameRoom, gameResults.winner);
 	}
 
 	closeRoom(gameRoom, winner) {
 		// update bth players elo and nority them
-		gameRoom.updatePlayerStats();
+		gameRoom.updatePlayerStats(winner);
 		// notify both players their elo change
-		this.notifyEloChange(player1);
-		this.notifyEloChange(player2);
+		this.notifyEloChange(gameRoom.player1);
+		this.notifyEloChange(gameRoom.player2);
 		// close delete the room
 		this.gameRooms.delete(gameRoom.uuid);
 	}
@@ -100,13 +106,13 @@ class GameManager {
 	}
 
 	notifyMatchData(player, matchData) {
+		console.log("--> sending match data");
 		const data = {
 			message: "Match started",
 			type: "ok",
-			data: {
-				matchData
-			}
+			data: { ...matchData }
 		};
+		console.log("--> sending match data", data);
 		this.socketIo.to(player.socketId).emit("matchData", data);
 	}
 
@@ -114,9 +120,7 @@ class GameManager {
 		const data = {
 			message: "Round started",
 			type: "ok",
-			data: {
-				currentRound
-			}
+			data: { currentRound }
 		};
 		this.socketIo.to(player.socketId).emit("roundStart", data);
 	}
@@ -125,37 +129,36 @@ class GameManager {
 		const data = {
 			message: "Time Remaining",
 			type: "ok",
-			data: {
-				timeRemaining
-			}
+			data: { timeRemaining }
 		};
 		this.socketIo.to(player.socketId).emit("timeRemaining", data);
 	}
 
-	notifyRoundEnd(player, matchData) {
+	notifyRoundEnd(player, roundResults) {
 		const data = {
 			message: "Round Ended",
 			type: "ok",
-			data: {
-				matchData
-			}
+			data: { ...roundResults }
 		};
 		this.socketIo.to(player.socketId).emit("roundEnded", data);
 	}
 
-	notifyGameEnd(player, gameData) {
+	notifyGameEnd(player, gameResults) {
 		const data = {
 			message: "Game Ended",
 			type: "ok",
-			data: {
-				gameData
-			}
+			data: { ...gameResults }
 		};
 		this.socketIo.to(player.socketId).emit("gameEnded", data);
 	}
 
 	notifyEloChange(player) {
-		this.socketIo.to(player.socketId).emit("eloChanged", player);
+		const data = {
+			message: "Elo changed",
+			type: "ok",
+			data: { ...player, elo: player.elo() }
+		};
+		this.socketIo.to(player.socketId).emit("eloChanged", data);
 	}
 }
 module.exports = GameManager;

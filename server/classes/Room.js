@@ -19,20 +19,22 @@ class Room {
 		console.log("ads", this.rounds);
 		console.log("asdasd", this.rounds[this.currentRound]);
 		const player1Move = roundData.get(this.player1.name);
-		const player2Move = roundData.get(this.player1.name);
+		const player2Move = roundData.get(this.player2.name);
 
 		//get winning player
 		const winningPlayer = this.getWinningPlayer(player1Move, player2Move);
+		console.log("winningPlayer", winningPlayer);
 
 		//create match results
-		const matchRsults = {
+		const roundResults = {
 			player1Move: player1Move,
 			player2Move: player2Move,
-			winner: winningPlayer
+			winner: winningPlayer?.name
 		};
+		console.log("roundResults", roundResults);
 
-		this.rounds[this.currentRound].set("winner", winningPlayer.name);
-		return matchRsults;
+		this.rounds[this.currentRound].set("winner", winningPlayer?.name);
+		return roundResults;
 	}
 
 	//rock -> scissors -> paper -> rock
@@ -65,37 +67,42 @@ class Room {
 	calculateGameResults() {
 		let player1Winns = 0;
 		let player2Winns = 0;
-		for (const round of this.rounds) {
-			let winner = round.get("winner");
-			if (winner === this.player1.name) {
+		this.rounds.forEach((round) => {
+			//calculate round winner
+			console.log("round -> ", round);
+			const roundWinner = round.get("winner");
+			if (roundWinner === this.player1.name) {
 				player1Winns++;
-			} else if (winner === this.player2.name) {
+			} else if (roundWinner === this.player2.name) {
 				player2Winns++;
 			}
-		}
-		let winner = null;
+		});
+		//calculate game winner
+		let gameWinner = null;
 		if (player1Winns > player2Winns) {
-			winner = this.player1;
+			gameWinner = this.player1;
 		} else if (player2Winns > player1Winns) {
-			winner = this.player2;
-		} else {
-			winner = null;
+			gameWinner = this.player2;
 		}
 
-		this.updatePlayerStats(winner);
+		this.updatePlayerStats(gameWinner);
 
-		return winner;
+		const gameResults = {
+			winner: gameWinner?.name,
+			rounds: Array.from(this.rounds.values())
+		};
+		return gameResults;
 	}
 
-	updatePlayerStats() {
+	updatePlayerStats(gameWinner) {
 		const gameTime = this.getRoomDuration();
-		if (this.player1.name === winner) {
+		if (this.player1.name === gameWinner) {
 			this.player1.timePlayed += gameTime;
 			this.player1.winCount += 1;
 			this.player1.winStreak += 1;
 			this.player2.timePlayed += gameTime;
 			this.player2.winStreak = 0;
-		} else if (this.player2.name === winner) {
+		} else if (this.player2.name === gameWinner) {
 			this.player2.timePlayed += gameTime;
 			this.player2.winCount += 1;
 			this.player2.winStreak += 1;
