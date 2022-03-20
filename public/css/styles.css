@@ -92,27 +92,28 @@ body {
 	font-size: 16px;
 }
 
-.gameplay-area {
+#gameplay-area {
 	/* background-color: orange; */
 	height: 70%;
 	width: 100%;
 }
 
-.game-message {
+#game-message {
 	text-align: center;
 	background-color: #121212;
 	height: 30%;
 	width: 100%;
 }
 
-.game-buttons {
+#game-buttons {
+	visibility: hidden;
 	height: 25%;
 	width: 100%;
 	padding-left: 35%;
 	padding-top: 5%;
 }
 
-.game-buttons > button {
+#game-buttons > button {
 	margin: 10px;
 	background-color: #121212; /* Green */
 	border: none;

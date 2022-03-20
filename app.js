@@ -54,11 +54,8 @@ function getPlayer(name) {
 
 function LoginOrCreatePlayer(name, socketId) {
 	let player = players.get(name);
-	console.log("login player: ".player);
 	if (player) {
-		if (player.isLoggedIn) {
-			return null;
-		}
+		if (player.isLoggedIn) return null;
 		player.isLoggedIn = true; //log him in
 		player.socketId = socketId; // update socket id
 		return player;
@@ -109,7 +106,6 @@ function handleUserLoggin(userName, socket) {
 
 	//get existing player and log him in ore create new player
 	const playerData = LoginOrCreatePlayer(userName, socket.id);
-	console.log(Array.from(players.values()));
 
 	if (playerData) {
 		io.to(socket.id).emit("loginResponse", {
@@ -128,8 +124,6 @@ function handleUserLoggin(userName, socket) {
 }
 
 function handleUserDisconnect(socket) {
-	console.log("socket disconnected", socket);
-	console.log(Array.from(players.values()));
 	const player = getPlayerBySocket(socket.id);
 	if (player) {
 		player.isLoggedIn = false; //log out user

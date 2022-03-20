@@ -11,19 +11,32 @@ class Room {
 		this.roomStartTime = new Date();
 	}
 
+	startRound() {
+		//create round map
+		const roundData = new Map();
+		//set round status to opened
+		roundData.set("status", "opened");
+		this.rounds[this.currentRound] = roundData;
+	}
+
+	endRound() {
+		//get round data
+		let roundData = this.rounds[this.currentRound];
+		//set round status to closed, players can no longer change their move
+		roundData.set("status", "closed");
+		this.rounds[this.currentRound] = roundData;
+	}
+
 	calculateRoundResults() {
 		//get existing round data
 		let roundData = this.rounds[this.currentRound];
 
 		//get both players move
-		console.log("ads", this.rounds);
-		console.log("asdasd", this.rounds[this.currentRound]);
 		const player1Move = roundData.get(this.player1.name);
 		const player2Move = roundData.get(this.player2.name);
 
 		//get winning player
 		const winningPlayer = this.getWinningPlayer(player1Move, player2Move);
-		console.log("winningPlayer", winningPlayer);
 
 		//create match results
 		const roundResults = {
@@ -55,11 +68,10 @@ class Room {
 		console.log("playerMadeMove", player, move);
 		//get existing round data
 		let roundData = this.rounds[this.currentRound];
-		//if its first move, create moove map
-		if (!roundData) roundData = new Map();
+		// if round is allready over, cancel move
+		if (roundData.get("status") === "closed") return;
 		//fil map with player move
 		roundData.set(player.name, move);
-		console.log("roundDataIs", roundData);
 		//save no rounds array
 		this.rounds[this.currentRound] = roundData;
 	}
@@ -77,6 +89,7 @@ class Room {
 				player2Winns++;
 			}
 		});
+
 		//calculate game winner
 		let gameWinner = null;
 		if (player1Winns > player2Winns) {
@@ -85,6 +98,7 @@ class Room {
 			gameWinner = this.player2;
 		}
 
+		// update both players elo
 		this.updatePlayerStats(gameWinner);
 
 		const gameResults = {
@@ -96,6 +110,7 @@ class Room {
 
 	updatePlayerStats(gameWinner) {
 		const gameTime = this.getRoomDuration();
+		console.log("updatePlayerStats", gameWinner, gameTime);
 		if (this.player1.name === gameWinner) {
 			this.player1.timePlayed += gameTime;
 			this.player1.winCount += 1;

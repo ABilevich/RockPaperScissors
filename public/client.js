@@ -73,6 +73,7 @@ function handleMatchData(data) {
 	roomUuid = data.data.roomUuid;
 }
 function handleRoundStart(data) {
+	document.getElementById("game-buttons").style.visibility = "visible";
 	gameIsOngoing = true;
 	currentRound = data.data.currentRound;
 	updateRoundCounter();
@@ -88,21 +89,31 @@ function handleRoundEnded(data) {
 	console.log("got round end data: ", data);
 	gameIsOngoing = false;
 	if (data.data.winner) {
-		updateGameMessage(`Round ended: ${data.data.winner} won this round`);
+		if (data.data.winner === playerName) {
+			updateGameMessage(`Round ended: you won this round!`);
+		} else {
+			updateGameMessage(
+				`Round ended: ${data.data.winner} won this round!`
+			);
+		}
 	} else {
 		updateGameMessage(`Round ended: it was a draw!`);
 	}
 }
 function handleGameEnded(data) {
+	document.getElementById("game-buttons").style.visibility = "hidden";
 	console.log("got game end data: ", data);
 	if (data.data.winner) {
-		updateGameMessage(`Game ended: ${data.data.winner} won the game!`);
+		if (data.data.winner === playerName) {
+			updateGameMessage(`Game ended: you won!!`);
+		} else {
+			updateGameMessage(`Game ended: ${data.data.winner} won!`);
+		}
 	} else {
 		updateGameMessage(`Game ended: it was a draw!`);
 	}
 }
 function handleElochanged(data) {
-	console.log("got ello change", data);
 	fillPlayerData(data.data);
 }
 
@@ -133,10 +144,11 @@ function emitPlayerMove(move) {
 // ---------------------- OTHER METHDS --------------------------------
 function fillPlayerData(playerData) {
 	document.getElementById("userNameText").innerText = playerData.name;
-	document.getElementById("timePlayedText").innerText = playerData.timePlayed;
+	document.getElementById("timePlayedText").innerText =
+		playerData.timePlayed.toFixed(1);
 	document.getElementById("winCountText").innerText = playerData.winCount;
 	document.getElementById("winStreakText").innerText = playerData.winStreak;
-	document.getElementById("eloText").innerText = playerData.elo;
+	document.getElementById("eloText").innerText = playerData.elo.toFixed(1);
 }
 
 function updateGameMessage(message) {
@@ -150,13 +162,13 @@ function updateRoundCounter() {
 }
 
 function choseRock() {
-	emitPlayerMove(ROCK);
+	if (gameIsOngoing) emitPlayerMove(ROCK);
 }
 
 function chosePaper() {
-	emitPlayerMove(PAPER);
+	if (gameIsOngoing) emitPlayerMove(PAPER);
 }
 
 function choseScissoors() {
-	emitPlayerMove(SCISSORS);
+	if (gameIsOngoing) emitPlayerMove(SCISSORS);
 }

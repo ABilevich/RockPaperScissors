@@ -67,7 +67,9 @@ class MatchMaker {
 
 	findBetterOponentOrStartMatch(player, oponent) {
 		const betterOponent = this.findOponentInQueue(player);
-		console.log("----> better oponent: ", betterOponent);
+		console.log(
+			`found another potential oponent for ${player.name} -> ${betterOponent.name}`
+		);
 		if (
 			betterOponent && //if there is another potential oponent
 			this.calcEloDif(player, betterOponent) <
@@ -75,18 +77,19 @@ class MatchMaker {
 		) {
 			this.notifyPlayer(player, `Found even better oponent!`);
 			console.log(
-				`found better oponnent for ${player.name} -> ${oponent.name}`
+				`new oponnent (${betterOponent.name}) for ${player.name} was better than before (${oponent.name})`
 			);
 			this.removePlayerFromQueue(betterOponent);
 
 			this.notifyPlayer(oponent, `Oponent unavailable...`);
+
 			//old player will lose its matchmaking, so lets start it again
 			setTimeout(() => this.findMatch(oponent), process.env.RETRY_TIMER);
 
 			this.startMatch(player, betterOponent);
 		} else {
 			console.log(
-				`starting match with original ooponent ${player.name} -> ${oponent.name}`
+				`${player.name} is starting match with original ooponent (${oponent.name})`
 			);
 			this.startMatch(player, oponent);
 		}
@@ -103,8 +106,11 @@ class MatchMaker {
 			`starting match between ${player1.name} and ${player2.name}`
 		);
 
-		//this.simulateMatch(player1, player2);
-		this.gm.createRoom(player1, player2);
+		if (process.env.MUST_SIMULATE_MATCH === "yes") {
+			this.simulateMatch(player1, player2);
+		} else {
+			this.gm.createRoom(player1, player2);
+		}
 	}
 
 	startForcedMatch(player) {
@@ -117,9 +123,14 @@ class MatchMaker {
 			this.notifyPlayer(player, `Starting match agains ${oponent.name}`);
 			this.notifyPlayer(oponent, `Starting match agains ${player.name}`);
 			this.removePlayerFromQueue(oponent);
-			this.simulateMatch(player, oponent);
+
+			//start real or simulated match
+			if (process.env.MUST_SIMULATE_MATCH === "yes") {
+				this.simulateMatch(player, oponent);
+			} else {
+				this.gm.createRoom(player1, oponent);
+			}
 		}
-		//TODO
 	}
 
 	simulateMatch(player1, player2) {
@@ -147,10 +158,6 @@ class MatchMaker {
 			if (!this.isPlayerOnQueue(player)) return; //if in that time, the player canceled matchmaking, exit.
 		}
 
-		console.log(
-			`player is on queue ${player.name}`,
-			this.isPlayerOnQueue(player)
-		);
 		//if someone else selected me for a match, return
 		if (!this.isPlayerOnQueue(player)) {
 			console.log(
@@ -218,7 +225,6 @@ class MatchMaker {
 	}
 
 	notifyPlayer(player, message) {
-		console.log(player, message);
 		this.socketIo.to(player.socketId).emit("serverMessage", message);
 	}
 

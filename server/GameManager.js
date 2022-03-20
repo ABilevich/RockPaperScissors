@@ -10,8 +10,6 @@ class GameManager {
 		//make a new room object and save on map
 		const newRoom = new Room(player1, player2);
 		this.gameRooms.set(newRoom.uuid, newRoom);
-		console.log("created room", newRoom);
-		console.log("in map", this.gameRooms.get(newRoom.uuid));
 		//set roomUuid on both players
 		player1.roomUuid = newRoom.uuid;
 		player2.roomUuid = newRoom.uuid;
@@ -34,6 +32,7 @@ class GameManager {
 	}
 
 	startRound(gameRoom) {
+		gameRoom.startRound();
 		//notify players round number and there player numbers
 		this.notifyRoundStart(gameRoom.player1, gameRoom.currentRound);
 		this.notifyRoundStart(gameRoom.player2, gameRoom.currentRound);
@@ -60,6 +59,7 @@ class GameManager {
 
 	endRound(gameRoom) {
 		//calculate round results and norify players
+		gameRoom.endRound();
 		const roundResults = gameRoom.calculateRoundResults();
 		this.notifyRoundEnd(gameRoom.player1, roundResults);
 		this.notifyRoundEnd(gameRoom.player2, roundResults);
@@ -80,6 +80,7 @@ class GameManager {
 	}
 
 	endGame(gameRoom) {
+		console.log("end game");
 		const gameResults = gameRoom.calculateGameResults();
 		this.notifyGameEnd(gameRoom.player1, gameResults);
 		this.notifyGameEnd(gameRoom.player2, gameResults);
@@ -87,8 +88,6 @@ class GameManager {
 	}
 
 	closeRoom(gameRoom, winner) {
-		// update bth players elo and nority them
-		gameRoom.updatePlayerStats(winner);
 		// notify both players their elo change
 		this.notifyEloChange(gameRoom.player1);
 		this.notifyEloChange(gameRoom.player2);
@@ -98,7 +97,6 @@ class GameManager {
 
 	playerMadeMove(roomUuid, player, move) {
 		console.log("playerMadeMove", roomUuid, player.name, move);
-		console.log("room is", this.gameRooms.get(roomUuid));
 		//when players make a move, register it on the rooom
 		const gameRoom = this.gameRooms.get(roomUuid);
 		if (!gameRoom) return;
@@ -106,13 +104,11 @@ class GameManager {
 	}
 
 	notifyMatchData(player, matchData) {
-		console.log("--> sending match data");
 		const data = {
 			message: "Match started",
 			type: "ok",
 			data: { ...matchData }
 		};
-		console.log("--> sending match data", data);
 		this.socketIo.to(player.socketId).emit("matchData", data);
 	}
 
