@@ -44,7 +44,6 @@ class Room {
 			player2Move: player2Move,
 			winner: winningPlayer?.name
 		};
-		console.log("roundResults", roundResults);
 
 		this.rounds[this.currentRound].set("winner", winningPlayer?.name);
 		return roundResults;
@@ -82,7 +81,6 @@ class Room {
 		let player2Winns = 0;
 		this.rounds.forEach((round) => {
 			//calculate round winner
-			console.log("round -> ", round);
 			const roundWinner = round.get("winner");
 			if (roundWinner === this.player1.name) {
 				player1Winns++;

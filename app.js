@@ -145,7 +145,6 @@ function handleCancelMatchmaking(userName, socket) {
 }
 
 function handlePlayerMove(data) {
-	console.log("handlePlayerMove", data);
 	const player = players.get(data.playerName);
 	if (!player) return;
 	gm.playerMadeMove(data.roomUuid, player, data.move);

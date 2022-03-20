@@ -12,7 +12,6 @@ socket.on("connect", function (socket) {
 });
 
 socket.on("serverMessage", (msg) => displayServerMessage(msg));
-socket.on("loginResponse", (data) => checkPlayerLoogin(data));
 
 socket.on("matchData", (data) => handleMatchData(data));
 socket.on("roundStart", (data) => handleRoundStart(data));
@@ -33,13 +32,11 @@ let roomUuid = null;
 let currentRound = null;
 
 function displayServerMessage(data) {
-	console.log("displayServerMessage", data);
+	console.log("displayServerMessage: ", data);
 }
-function checkPlayerLoogin(data) {
-	console.log("checkPlayerLoogin", data);
-}
+
 function handleMatchData(data) {
-	console.log("handleMatchData", data);
+	console.log("Got match data");
 	player1 = data.data.player1;
 	player2 = data.data.player2;
 	totalRounds = data.data.totalRounds;
@@ -67,7 +64,7 @@ function handleRoundEnded(data) {
 	console.log("Round ended");
 }
 function handleGameEnded(data) {
-	console.log("Game ended", data);
+	console.log("Game ended, winner: ", data.data.winner || "draw");
 	setTimeout(() => startMatch(), process.env.WAIT_BETWEEN_MATCHES);
 }
 
