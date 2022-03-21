@@ -40,11 +40,14 @@ class Room {
 		//get winning player
 		const winningPlayer = this.getWinningPlayer(player1Move, player2Move);
 
-		if (winningPlayer.name == this.player1.name) {
-			this.player1Wins++;
-		} else if (winningPlayer.name == this.player2.name) {
-			this.player2Wins++;
+		if (winningPlayer) {
+			if (winningPlayer.name == this.player1.name) {
+				this.player1Wins++;
+			} else if (winningPlayer.name == this.player2.name) {
+				this.player2Wins++;
+			}
 		}
+
 		//create match results
 		const roundResults = {
 			player1Move: player1Move,
