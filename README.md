@@ -4,6 +4,8 @@ A simple multiplayer Rock Paper Scissors game
 
 It consists of a server that hosts a multiplayer Rock-Paper-Scissors game with elo based matchmaking.
 
+Fist of all, copy the ".env.example" file and rename it to ".env"
+
 To run the server:
 
 ```

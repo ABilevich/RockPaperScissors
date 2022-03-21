@@ -164,7 +164,7 @@ function setUpExpress() {
 			winStreak: player.winStreak
 		}));
 		modifiedPlayerList.sort((p1, p2) => {
-			return p1.elo - p2.elo;
+			return p2.elo - p1.elo;
 		});
 		res.send(JSON.stringify(modifiedPlayerList));
 	});

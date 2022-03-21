@@ -126,7 +126,7 @@ class MatchMaker {
 			if (process.env.MUST_SIMULATE_MATCH === "yes") {
 				this.simulateMatch(player, oponent);
 			} else {
-				this.gm.createRoom(player1, oponent);
+				this.gm.createRoom(player, oponent);
 			}
 		}
 	}
