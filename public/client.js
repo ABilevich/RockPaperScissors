@@ -104,8 +104,6 @@ function handleRoundEnded(data) {
 		oponentName = player1;
 	}
 
-	if (!oponentMove) oponentMove = "nothing";
-
 	console.log("oponent move is: ", oponentMove);
 	console.log("got round end data: ", data);
 	gameIsOngoing = false;
@@ -229,5 +227,7 @@ function parseMove(move) {
 			return "paper";
 		case SCISSORS:
 			return "scissors";
+		default:
+			return "nothing";
 	}
 }

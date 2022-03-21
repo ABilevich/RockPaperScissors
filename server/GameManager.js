@@ -63,7 +63,17 @@ class GameManager {
 		const roundResults = gameRoom.calculateRoundResults();
 		this.notifyRoundEnd(gameRoom.player1, roundResults);
 		this.notifyRoundEnd(gameRoom.player2, roundResults);
-		if (gameRoom.currentRound < process.env.ROUNDS_PER_GAME) {
+
+		//check if match is allready won
+		let matchEnded = false;
+		if (gameRoom.currentRound > 1) {
+			matchEnded = gameRoom.checkWinnCondition();
+		}
+
+		if (
+			!matchEnded &&
+			gameRoom.currentRound < process.env.ROUNDS_PER_GAME
+		) {
 			//if the game has more rounds remaining, start next round
 			gameRoom.currentRound += 1;
 			setTimeout(

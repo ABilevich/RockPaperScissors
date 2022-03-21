@@ -9,6 +9,8 @@ class Room {
 		this.currentRound = 1;
 		this.timeout = null;
 		this.roomStartTime = new Date();
+		this.player1Wins = 0;
+		this.player2Wins = 0;
 	}
 
 	startRound() {
@@ -38,6 +40,11 @@ class Room {
 		//get winning player
 		const winningPlayer = this.getWinningPlayer(player1Move, player2Move);
 
+		if (winningPlayer.name == this.player1.name) {
+			this.player1Wins++;
+		} else if (winningPlayer.name == this.player2.name) {
+			this.player2Wins++;
+		}
 		//create match results
 		const roundResults = {
 			player1Move: player1Move,
@@ -133,6 +140,12 @@ class Room {
 		const now = new Date();
 		let dif = now.getTime() - this.roomStartTime.getTime();
 		return Math.abs(dif / 1000);
+	}
+
+	checkWinnCondition() {
+		if (this.player1Wins > process.env.ROUNDS_PER_GAME / 2) return true;
+		if (this.player2Wins > process.env.ROUNDS_PER_GAME / 2) return true;
+		return false;
 	}
 }
 module.exports = Room;
