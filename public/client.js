@@ -95,11 +95,16 @@ function handleRoundEnded(data) {
 	displayServerMessage("Round ended");
 
 	let oponentMove = null;
+	let oponentName = null;
 	if (player1 == playerName) {
 		oponentMove = data.data.player2Move;
+		oponentName = player2;
 	} else {
 		oponentMove = data.data.player1Move;
+		oponentName = player1;
 	}
+
+	if (!oponentMove) oponentMove = "nothing";
 
 	console.log("oponent move is: ", oponentMove);
 	console.log("got round end data: ", data);
@@ -107,13 +112,13 @@ function handleRoundEnded(data) {
 	if (data.data.winner) {
 		if (data.data.winner === playerName) {
 			updateGameMessage(
-				`Round ended, ${data.data.winner} chose ${parseMove(
+				`Round ended, ${oponentName} chose ${parseMove(
 					oponentMove
 				)}, you won this round!`
 			);
 		} else {
 			updateGameMessage(
-				`Round ended, ${data.data.winner} chose ${parseMove(
+				`Round ended, ${oponentName} chose ${parseMove(
 					oponentMove
 				)} and won this round!`
 			);

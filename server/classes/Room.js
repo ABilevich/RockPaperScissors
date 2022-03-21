@@ -111,7 +111,9 @@ class Room {
 		const gameTime = this.getRoomDuration();
 		if (!gameWinner) {
 			this.player1.timePlayed += gameTime;
+			this.player1.winStreak = 0;
 			this.player2.timePlayed += gameTime;
+			this.player2.winStreak = 0;
 		} else if (this.player1.name === gameWinner.name) {
 			this.player1.timePlayed += gameTime;
 			this.player1.winCount += 1;
