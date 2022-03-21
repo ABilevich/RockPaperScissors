@@ -33,6 +33,8 @@ node .\spawnBot.js
 
 This bot will start with an elo of 0 and play as any player would but with random moves
 
+Note that bots can't match against each other
+
 After every match end, it will restart matchmaking
 
 Note: many files contain console.logs for debugging reasons.
