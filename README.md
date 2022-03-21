@@ -30,7 +30,10 @@ node .\spawnBot.js
 ```
 
 This bot will start with an elo of 0 and play as any player would but with random moves
+
 After every match end, it will restart matchmaking
+
+Note: many files contain console.logs for debugging reasons.
 
 Author: Andres Bilevich
 
