@@ -41,3 +41,5 @@ BSTQueue.insert(player6.elo, player6);
 console.log(BSTQueue.find(player1.elo));
 
 console.log(BSTQueue.findClosest(player6.elo, player6));
+
+//This file isnt working, its only here because it was used to test the tree originaly
