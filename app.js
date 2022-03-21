@@ -37,7 +37,8 @@ function initializeServer() {
 
 function createNewPlayer(name, socketId) {
 	console.log(`Created player: ${name}`);
-	const newPlayer = new Player(name, socketId);
+	const isBot = checkIsBot(name);
+	const newPlayer = new Player(name, isBot, socketId);
 	players.set(newPlayer.name, newPlayer);
 	return newPlayer;
 }
@@ -67,12 +68,9 @@ function getPlayerBySocket(socketId) {
 }
 
 function usernameIsValid(str) {
-	const isBoot =
-		/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
-			str
-		);
+	const isBot = checkIsBot(str);
 	const isValidUser = /^[a-zA-Z]+$/.test(str);
-	return isBoot || isValidUser; //check if username letters or uuid
+	return isBot || isValidUser; //check if username letters or uuid
 }
 
 function setupSockets() {
@@ -172,6 +170,12 @@ function setUpExpress() {
 	server.listen(process.env.PORT, () => {
 		console.log(`listening on port ${process.env.PORT}`);
 	});
+}
+
+function checkIsBot(name) {
+	return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
+		name
+	);
 }
 
 initializeServer();

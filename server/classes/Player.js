@@ -1,5 +1,5 @@
 class Player {
-	constructor(name, socketId) {
+	constructor(name, isBot, socketId) {
 		this.name = name;
 		this.timePlayed = 0;
 		this.winCount = 0;
@@ -10,6 +10,7 @@ class Player {
 		this.isOnQueue = false;
 		this.roomUuid = null;
 		this.isMatching = false;
+		this.isBot = isBot;
 	}
 
 	elo() {

@@ -131,11 +131,7 @@ class BSTQueue {
 				}
 			} else {
 				//if the current node has exactly the same elo, chek if there is another player (not me)
-				if (
-					current.players.filter(
-						(auxPlayer) => auxPlayer.name != player.name
-					).length > 0
-				)
+				if (this.getValidOponents(player, current.players).length > 0)
 					found = current;
 				else {
 					//if not, chekc the right child and go all de way left (the closest to the right)
@@ -168,9 +164,7 @@ class BSTQueue {
 		}
 
 		if (!found) return undefined;
-		return found.players.filter(
-			(auxPlayer) => auxPlayer.name != player.name
-		);
+		return this.getValidOponents(player, found.players);
 	}
 
 	remove(player) {
@@ -229,6 +223,16 @@ class BSTQueue {
 
 	absDif(value1, value2) {
 		return Math.abs(value1 - value2);
+	}
+
+	getValidOponents(player, oponents) {
+		if (player.isBot) {
+			return oponents.filter(
+				(oponent) => !oponent.isBot && player.name != oponent.name
+			);
+		} else {
+			return oponents.filter((oponent) => player.name != oponent.name);
+		}
 	}
 }
 
