@@ -93,14 +93,29 @@ function handleTimeRemaining(data) {
 
 function handleRoundEnded(data) {
 	displayServerMessage("Round ended");
+
+	let oponentMove = null;
+	if (player1 == playerName) {
+		oponentMove = data.data.player2Move;
+	} else {
+		oponentMove = data.data.player1Move;
+	}
+
+	console.log("oponent move is: ", oponentMove);
 	console.log("got round end data: ", data);
 	gameIsOngoing = false;
 	if (data.data.winner) {
 		if (data.data.winner === playerName) {
-			updateGameMessage(`Round ended: you won this round!`);
+			updateGameMessage(
+				`Round ended, ${data.data.winner} chose ${parseMove(
+					oponentMove
+				)}, you won this round!`
+			);
 		} else {
 			updateGameMessage(
-				`Round ended: ${data.data.winner} won this round!`
+				`Round ended, ${data.data.winner} chose ${parseMove(
+					oponentMove
+				)} and won this round!`
 			);
 		}
 	} else {
@@ -155,6 +170,7 @@ function cancelMatchMaking() {
 }
 
 function emitPlayerMove(move) {
+	document.getElementById("game-buttons").style.visibility = "hidden";
 	const data = {
 		roomUuid,
 		playerName,
@@ -198,4 +214,15 @@ function choseScissoors() {
 function clearDisplay() {
 	document.getElementById("gameText").innerText = "";
 	document.getElementById("roundCounter").innerText = "";
+}
+
+function parseMove(move) {
+	switch (move) {
+		case ROCK:
+			return "rock";
+		case PAPER:
+			return "paper";
+		case SCISSORS:
+			return "scissors";
+	}
 }

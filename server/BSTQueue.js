@@ -79,58 +79,58 @@ class BSTQueue {
 
 		let current = this.root;
 		let found = false;
-		let fallback = null;
 
-		let smallest = null;
+		let closest = null;
 
 		while (current && !found) {
 			if (value < current.value) {
-				//save thhe smallest node along the way
+				//save the closest node along the way
 				if (
-					!smallest ||
-					this.absDif(smallest.value, value) >
+					!closest ||
+					this.absDif(closest.value, value) >
 						this.absDif(current.value, value)
 				)
-					smallest = current;
+					closest = current;
 				if (current.left) {
 					//fallback = current;
 					current = current.left;
 				} else if (current.right) {
-					const smallestChild = this.kthSmallestNode(current.right);
+					const closestChild = this.kthSmallestNode(current.right);
 					if (
-						!smallest ||
-						this.absDif(smallest.value, value) >
-							this.absDif(smallestChild.value, value)
+						!closest ||
+						this.absDif(closest.value, value) >
+							this.absDif(closestChild.value, value)
 					)
-						smallest = smallestChild;
-					found = smallest;
+						closest = closestChild;
+					found = closest;
 				} else {
-					found = smallest;
+					found = closest;
 				}
 			} else if (value > current.value) {
-				//save thhe smallest node along the way
+				//save thhe closest node along the way
 				if (
-					!smallest ||
-					this.absDif(smallest.value, value) >
+					!closest ||
+					this.absDif(closest.value, value) >
 						this.absDif(current.value, value)
 				)
-					smallest = current;
+					closest = current;
 				if (current.right) {
 					//fallback = current;
 					current = current.right;
 				} else if (current.left) {
-					const smallestChild = this.kthBiggestNode(current.left);
+					const closestChild = this.kthBiggestNode(current.left);
 					if (
-						!smallest ||
-						this.absDif(smallest.value, value) >
-							this.absDif(smallestChild.value, value)
+						!closest ||
+						this.absDif(closest.value, value) >
+							this.absDif(closestChild.value, value)
 					)
-						smallest = smallestChild;
-					found = smallest;
+						closest = closestChild;
+					found = closest;
 				} else {
-					found = smallest;
+					found = closest;
 				}
 			} else {
+				//if the current node has exactly the same elo, chek if there is another player (not me)
 				if (
 					current.players.filter(
 						(auxPlayer) => auxPlayer.name != player.name
@@ -138,33 +138,32 @@ class BSTQueue {
 				)
 					found = current;
 				else {
+					//if not, chekc the right child and go all de way left (the closest to the right)
 					if (current.right) {
-						const smallestRight = this.kthSmallestNode(
+						const closestRight = this.kthSmallestNode(
 							current.right
 						);
 						if (
-							!smallest ||
-							this.absDif(smallest.value, value) >
-								this.absDif(smallestRight.value, value)
+							!closest ||
+							this.absDif(closest.value, value) >
+								this.absDif(closestRight.value, value)
 						)
-							smallest = smallestRight;
+							closest = closestRight;
 					}
+					// and chekc the left child and go all de way right (the biggest to the left)
 					if (current.left) {
-						const smallestLeft = this.kthBiggestNode(current.left);
+						const closestLeft = this.kthBiggestNode(current.left);
 						if (
-							!smallest ||
-							this.absDif(smallest.value, value) >
-								this.absDif(smallestLeft.value, value)
+							!closest ||
+							this.absDif(closest.value, value) >
+								this.absDif(closestLeft.value, value)
 						)
-							smallest = smallestLeft;
+							closest = closestLeft;
 					}
-					if (smallest) found = smallest;
+					// if there is a closest defined, thats is the closest one
+					if (closest) found = closest;
 					else current = null;
 				}
-				// else if (current.right) current = current.right;
-				// else if (current.left) current = current.left;
-				// else if (fallback) found = fallback;
-				// else current = null;
 			}
 		}
 
@@ -218,7 +217,7 @@ class BSTQueue {
 		}
 	}
 
-	/// helper function to find the smallest node
+	/// helper function to find the closest node
 	kthSmallestNode(node) {
 		while (!node.left === null) node = node.left;
 		return node;
