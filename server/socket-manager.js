@@ -56,7 +56,7 @@ class SocketManager {
 		} catch (error) {
 			console.error(error);
 			this.socketIo.to(socket.id).emit("loginResponse", {
-				message: "Login Error",
+				message: "Invalid name",
 				type: "error",
 				data: null
 			});

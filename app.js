@@ -24,10 +24,10 @@ let playerManager = null;
 let socketManager = null;
 
 function initializeServer() {
-	gameManager = new GameManager();
-	matchMaker = new MatchMaker();
-	playerManager = new PlayerManager();
-	socketManager = new SocketManager(io);
+	gameManager = new GameManager(); //Manages the flow of the game
+	matchMaker = new MatchMaker(); //Manages the matchmaking engine
+	playerManager = new PlayerManager(); // Manages player acctions
+	socketManager = new SocketManager(io); // Manages socket messaging
 
 	console.log("Setting up Sockets...");
 	socketManager.initialize(gameManager, matchMaker, playerManager);
@@ -42,13 +42,13 @@ function initializeServer() {
 	playerManager.initialize();
 
 	console.log("Setting up server...");
-	setUpExpress();
+	setUpServer();
 }
 
-function setUpExpress() {
+function setUpServer() {
 	app.use(express.static(__dirname + "/public"));
 
-	//leaderbiard to featch player info
+	//leaderboard to featch player info
 	app.get("/leaderboard", function (req, res) {
 		const players = playerManager.getPlayerList();
 		res.send(JSON.stringify(players));

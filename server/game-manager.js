@@ -61,6 +61,14 @@ class GameManager {
 		}
 	}
 
+	playerMadeMove(roomUuid, player, move) {
+		console.log("playerMadeMove", roomUuid, player.name, move);
+		//when players make a move, register it on the rooom
+		const gameRoom = this.gameRooms.get(roomUuid);
+		if (!gameRoom) return;
+		gameRoom.playerMadeMove(player, move);
+	}
+
 	endRound(gameRoom) {
 		//calculate round results and norify players
 		gameRoom.endRound();
@@ -108,14 +116,6 @@ class GameManager {
 		this.notifyEloChange(gameRoom.player2);
 		// close delete the room
 		this.gameRooms.delete(gameRoom.uuid);
-	}
-
-	playerMadeMove(roomUuid, player, move) {
-		console.log("playerMadeMove", roomUuid, player.name, move);
-		//when players make a move, register it on the rooom
-		const gameRoom = this.gameRooms.get(roomUuid);
-		if (!gameRoom) return;
-		gameRoom.playerMadeMove(player, move);
 	}
 
 	// ----------- NOTIFICATIONS -----------------
