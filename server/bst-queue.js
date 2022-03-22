@@ -1,4 +1,4 @@
-class Node {
+class node {
 	constructor(value, player) {
 		this.value = value;
 		this.players = [player];
@@ -14,7 +14,7 @@ class bstQueue {
 	}
 	insert(player) {
 		const value = player.elo();
-		var newNode = new Node(value, player);
+		var newNode = new node(value, player);
 		if (this.root === null) {
 			this.root = newNode;
 			return this;
