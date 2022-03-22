@@ -41,7 +41,7 @@ Note: many files contain console.logs for debugging reasons.
 
 Naming conventions used:
 
--   class names -> PascalCase
+-   class names -> camelCase
 -   file names -> snake-case
 -   variable names -> camelCase
 -   method names -> camelCase

@@ -1,14 +1,14 @@
 const BSTQueue = require("./bst-queue");
 
-class MatchMaker {
+class matchMaker {
 	constructor() {
 		this.gameQueue = new BSTQueue();
 	}
 
-	initialize(socketManager, gameManager) {
-		this.socketManager = socketManager;
-		this.gameManager = gameManager;
-		console.log("MatchMaker Initialized!");
+	initialize(sm, gm) {
+		this.sm = sm;
+		this.gm = gm;
+		console.log("matchMaker Initialized!");
 	}
 
 	isPlayerOnQueue(player) {
@@ -110,7 +110,7 @@ class MatchMaker {
 		if (process.env.MUST_SIMULATE_MATCH === "yes") {
 			this.simulateMatch(player1, player2);
 		} else {
-			this.gameManager.createRoom(player1, player2);
+			this.gm.createRoom(player1, player2);
 		}
 	}
 
@@ -129,7 +129,7 @@ class MatchMaker {
 			if (process.env.MUST_SIMULATE_MATCH === "yes") {
 				this.simulateMatch(player, oponent);
 			} else {
-				this.gameManager.createRoom(player, oponent);
+				this.gm.createRoom(player, oponent);
 			}
 		}
 	}
@@ -236,19 +236,15 @@ class MatchMaker {
 
 	// -------------------- NITIFICATIONS -------------------
 	notifyPlayer(player, message) {
-		this.socketManager.notifySocket(
-			player.socketId,
-			"serverMessage",
-			message
-		);
+		this.sm.notifySocket(player.socketId, "serverMessage", message);
 	}
 
 	notifyPlayerCantCancel(player) {
-		this.socketManager.notifySocket(player.socketId, "playerCantCancel");
+		this.sm.notifySocket(player.socketId, "playerCantCancel");
 	}
 
 	notifyPlayerCanCancel(player) {
-		this.socketManager.notifySocket(player.socketId, "playerCanCancel");
+		this.sm.notifySocket(player.socketId, "playerCanCancel");
 	}
 
 	// ----------------------- UTILS -----------------------
@@ -261,4 +257,4 @@ class MatchMaker {
 	}
 }
 
-module.exports = MatchMaker;
+module.exports = matchMaker;

@@ -1,13 +1,13 @@
 const Room = require("./classes/room");
 
-class GameManager {
+class gameManager {
 	constructor() {
 		this.gameRooms = new Map();
 	}
 
-	initialize(socketManager) {
-		this.socketManager = socketManager;
-		console.log("GameManager Initialized!");
+	initialize(sm) {
+		this.sm = sm;
+		console.log("gameManager Initialized!");
 	}
 
 	createRoom(player1, player2) {
@@ -126,7 +126,7 @@ class GameManager {
 			type: "ok",
 			data: { ...matchData }
 		};
-		this.socketManager.notifySocket(player.socketId, "matchData", data);
+		this.sm.notifySocket(player.socketId, "matchData", data);
 	}
 
 	notifyRoundStart(player, currentRound) {
@@ -135,7 +135,7 @@ class GameManager {
 			type: "ok",
 			data: { currentRound }
 		};
-		this.socketManager.notifySocket(player.socketId, "roundStart", data);
+		this.sm.notifySocket(player.socketId, "roundStart", data);
 	}
 
 	notifyTimeRemaining(player, timeRemaining) {
@@ -144,7 +144,7 @@ class GameManager {
 			type: "ok",
 			data: { timeRemaining }
 		};
-		this.socketManager.notifySocket(player.socketId, "timeRemaining", data);
+		this.sm.notifySocket(player.socketId, "timeRemaining", data);
 	}
 
 	notifyRoundEnd(player, roundResults) {
@@ -153,7 +153,7 @@ class GameManager {
 			type: "ok",
 			data: { ...roundResults }
 		};
-		this.socketManager.notifySocket(player.socketId, "roundEnded", data);
+		this.sm.notifySocket(player.socketId, "roundEnded", data);
 	}
 
 	notifyGameEnd(player, gameResults) {
@@ -162,7 +162,7 @@ class GameManager {
 			type: "ok",
 			data: { ...gameResults }
 		};
-		this.socketManager.notifySocket(player.socketId, "gameEnded", data);
+		this.sm.notifySocket(player.socketId, "gameEnded", data);
 	}
 
 	notifyEloChange(player) {
@@ -171,7 +171,7 @@ class GameManager {
 			type: "ok",
 			data: { ...player, elo: player.elo() }
 		};
-		this.socketManager.notifySocket(player.socketId, "eloChanged", data);
+		this.sm.notifySocket(player.socketId, "eloChanged", data);
 	}
 }
-module.exports = GameManager;
+module.exports = gameManager;

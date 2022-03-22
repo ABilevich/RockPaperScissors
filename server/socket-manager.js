@@ -1,14 +1,14 @@
-class SocketManager {
+class socketManager {
 	constructor(io) {
 		this.socketIo = io;
 	}
 
-	initialize(gameManager, matchMaker, playerManager) {
-		this.gameManager = gameManager;
-		this.matchMaker = matchMaker;
-		this.playerManager = playerManager;
+	initialize(gm, mm, pm) {
+		this.gm = gm;
+		this.mm = mm;
+		this.pm = pm;
 		this.setupSockets();
-		console.log("SocketManager Initialized!");
+		console.log("socketManager Initialized!");
 	}
 
 	setupSockets() {
@@ -35,10 +35,7 @@ class SocketManager {
 	handleUserLoggin(userName, socket) {
 		console.log("user login ", userName);
 		try {
-			const playerData = this.playerManager.LoginOrCreatePlayer(
-				userName,
-				socket.id
-			);
+			const playerData = this.pm.LoginOrCreatePlayer(userName, socket.id);
 			if (playerData) {
 				this.socketIo.to(socket.id).emit("loginResponse", {
 					message: `user ${userName} logged in.`,
@@ -64,30 +61,30 @@ class SocketManager {
 	}
 
 	handleUserDisconnect(socket) {
-		const player = this.playerManager.getPlayerBySocket(socket.id);
+		const player = this.pm.getPlayerBySocket(socket.id);
 		if (!player) return;
-		this.playerManager.logOutPlayer(player); //log out player
-		this.matchMaker.handleDisconnect(player); //handle his disconnect
+		this.pm.logOutPlayer(player); //log out player
+		this.mm.handleDisconnect(player); //handle his disconnect
 	}
 
 	handleStartMatchmaking(userName) {
-		const player = this.playerManager.getPlayer(userName);
+		const player = this.pm.getPlayer(userName);
 		if (!player || player.isMatching) return; //if player is matching, return
 		console.log(`player ${userName} entered matchmaking`);
-		this.matchMaker.findMatch(player); //start matchmaking
+		this.mm.findMatch(player); //start matchmaking
 	}
 
 	handleCancelMatchmaking(userName) {
-		const player = this.playerManager.getPlayer(userName);
+		const player = this.pm.getPlayer(userName);
 		if (!player || !player.isMatching) return; //if player is not matching, return
 		console.log(`player ${userName} canceled matchmaking`);
-		this.matchMaker.handleCancelMatchMaking(player); // stop matchmaking
+		this.mm.handleCancelMatchMaking(player); // stop matchmaking
 	}
 
 	handlePlayerMove(data) {
-		const player = this.playerManager.getPlayer(data.playerName);
+		const player = this.pm.getPlayer(data.playerName);
 		if (!player) return; // if player does not exist, return
-		this.gameManager.playerMadeMove(data.roomUuid, player, data.move); //make move
+		this.gm.playerMadeMove(data.roomUuid, player, data.move); //make move
 	}
 
 	// ----------------- NOTIFICATIONS --------------------
@@ -97,4 +94,4 @@ class SocketManager {
 	}
 }
 
-module.exports = SocketManager;
+module.exports = socketManager;

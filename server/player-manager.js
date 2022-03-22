@@ -1,12 +1,12 @@
 const Player = require("./classes/player");
 
-class PlayerManager {
+class playerManager {
 	constructor() {
 		this.players = new Map();
 	}
 
 	initialize() {
-		console.log("PlayerManager Initialized!");
+		console.log("playerManager Initialized!");
 	}
 
 	// ------------------ GETTERS ----------------
@@ -81,4 +81,4 @@ class PlayerManager {
 	}
 }
 
-module.exports = PlayerManager;
+module.exports = playerManager;
