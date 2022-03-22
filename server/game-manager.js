@@ -1,9 +1,13 @@
-const Room = require("./classes/Room");
+const Room = require("./classes/room");
 
 class GameManager {
-	constructor(io) {
-		this.socketIo = io;
+	constructor() {
 		this.gameRooms = new Map();
+	}
+
+	initialize(socketManager) {
+		this.socketManager = socketManager;
+		console.log("GameManager Initialized!");
 	}
 
 	createRoom(player1, player2) {
@@ -114,13 +118,15 @@ class GameManager {
 		gameRoom.playerMadeMove(player, move);
 	}
 
+	// ----------- NOTIFICATIONS -----------------
+
 	notifyMatchData(player, matchData) {
 		const data = {
 			message: "Match started",
 			type: "ok",
 			data: { ...matchData }
 		};
-		this.socketIo.to(player.socketId).emit("matchData", data);
+		this.socketManager.notifySocket(player.socketId, "matchData", data);
 	}
 
 	notifyRoundStart(player, currentRound) {
@@ -129,7 +135,7 @@ class GameManager {
 			type: "ok",
 			data: { currentRound }
 		};
-		this.socketIo.to(player.socketId).emit("roundStart", data);
+		this.socketManager.notifySocket(player.socketId, "roundStart", data);
 	}
 
 	notifyTimeRemaining(player, timeRemaining) {
@@ -138,7 +144,7 @@ class GameManager {
 			type: "ok",
 			data: { timeRemaining }
 		};
-		this.socketIo.to(player.socketId).emit("timeRemaining", data);
+		this.socketManager.notifySocket(player.socketId, "timeRemaining", data);
 	}
 
 	notifyRoundEnd(player, roundResults) {
@@ -147,7 +153,7 @@ class GameManager {
 			type: "ok",
 			data: { ...roundResults }
 		};
-		this.socketIo.to(player.socketId).emit("roundEnded", data);
+		this.socketManager.notifySocket(player.socketId, "roundEnded", data);
 	}
 
 	notifyGameEnd(player, gameResults) {
@@ -156,7 +162,7 @@ class GameManager {
 			type: "ok",
 			data: { ...gameResults }
 		};
-		this.socketIo.to(player.socketId).emit("gameEnded", data);
+		this.socketManager.notifySocket(player.socketId, "gameEnded", data);
 	}
 
 	notifyEloChange(player) {
@@ -165,7 +171,7 @@ class GameManager {
 			type: "ok",
 			data: { ...player, elo: player.elo() }
 		};
-		this.socketIo.to(player.socketId).emit("eloChanged", data);
+		this.socketManager.notifySocket(player.socketId, "eloChanged", data);
 	}
 }
 module.exports = GameManager;

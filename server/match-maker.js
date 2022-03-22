@@ -1,16 +1,18 @@
-const BSTQueue = require("./BSTQueue");
-const Player = require("./classes/Player");
+const BSTQueue = require("./bst-queue");
 
 class MatchMaker {
-	constructor(io, gm) {
-		this.socketIo = io;
+	constructor() {
 		this.gameQueue = new BSTQueue();
-		this.gm = gm;
+	}
+
+	initialize(socketManager, gameManager) {
+		this.socketManager = socketManager;
+		this.gameManager = gameManager;
+		console.log("MatchMaker Initialized!");
 	}
 
 	isPlayerOnQueue(player) {
 		return player.isOnQueue; //saving state on payer object for fast response
-		// return this.gameQueue.has(player);
 	}
 
 	addPlayerToQueue(player) {
@@ -107,7 +109,7 @@ class MatchMaker {
 		if (process.env.MUST_SIMULATE_MATCH === "yes") {
 			this.simulateMatch(player1, player2);
 		} else {
-			this.gm.createRoom(player1, player2);
+			this.gameManager.createRoom(player1, player2);
 		}
 	}
 
@@ -126,7 +128,7 @@ class MatchMaker {
 			if (process.env.MUST_SIMULATE_MATCH === "yes") {
 				this.simulateMatch(player, oponent);
 			} else {
-				this.gm.createRoom(player, oponent);
+				this.gameManager.createRoom(player, oponent);
 			}
 		}
 	}
@@ -211,6 +213,7 @@ class MatchMaker {
 		}
 	}
 
+	// ---------------------- HANDLES -----------------------
 	handleCancelMatchMaking(player) {
 		if (this.isPlayerOnQueue(player)) {
 			if (player.retryTimeout) clearTimeout(player.retryTimeout); //stop retry timeoout
@@ -225,24 +228,29 @@ class MatchMaker {
 		}
 	}
 
-	notifyPlayer(player, message) {
-		this.socketIo.to(player.socketId).emit("serverMessage", message);
-	}
-
-	notifyPlayerCantCancel(player) {
-		this.socketIo.to(player.socketId).emit("playerCantCancel");
-	}
-
-	notifyPlayerCanCancel(player) {
-		this.socketIo.to(player.socketId).emit("playerCanCancel");
-	}
-
 	handleDisconnect(player) {
 		if (player.retryTimeout) clearTimeout(player.retryTimeout); //stop retry timeoout
 		this.removePlayerFromQueue(player);
-		//TODO: if match had allready started, notify
 	}
 
+	// -------------------- NITIFICATIONS -------------------
+	notifyPlayer(player, message) {
+		this.socketManager.notifySocket(
+			player.socketId,
+			"serverMessage",
+			message
+		);
+	}
+
+	notifyPlayerCantCancel(player) {
+		this.socketManager.notifySocket(player.socketId, "playerCantCancel");
+	}
+
+	notifyPlayerCanCancel(player) {
+		this.socketManager.notifySocket(player.socketId, "playerCanCancel");
+	}
+
+	// ----------------------- UTILS -----------------------
 	waitFor(time) {
 		return new Promise((resolve) => {
 			setTimeout(() => {

@@ -1,5 +1,5 @@
-const BSTQueue = require("../BSTQueue");
-const Player = require("../classes/Player");
+const BSTQueue = require("../bst-queue");
+const Player = require("../classes/player");
 const { v4: uuidv4 } = require("uuid");
 
 const BSTQueue = new BSTQueue();

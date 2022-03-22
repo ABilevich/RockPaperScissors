@@ -28,7 +28,7 @@ The server also exposes an endpoint to fetch the current leaderboards:
 You can also add bots by moving to the folder named "bots" and running:
 
 ```
-node .\spawnBot.js
+node .\spawn-bot.js
 ```
 
 This bot will start with an elo of 0 and play as any player would but with random moves
@@ -38,6 +38,13 @@ Note that bots can't match against each other
 After every match end, it will restart matchmaking
 
 Note: many files contain console.logs for debugging reasons.
+
+Naming conventions used:
+
+-   class names -> PascalCase
+-   file names -> snake-case
+-   variable names -> camelCase
+-   method names -> camelCase
 
 Author: Andres Bilevich
 
