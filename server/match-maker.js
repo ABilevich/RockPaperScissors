@@ -1,8 +1,8 @@
-const BSTQueue = require("./bst-queue");
+const bstQueue = require("./bst-queue");
 
 class matchMaker {
 	constructor() {
-		this.gameQueue = new BSTQueue();
+		this.gameQueue = new bstQueue();
 	}
 
 	initialize(sm, gm) {

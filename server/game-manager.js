@@ -1,4 +1,4 @@
-const Room = require("./classes/room");
+const room = require("./classes/room");
 
 class gameManager {
 	constructor() {
@@ -12,7 +12,7 @@ class gameManager {
 
 	createRoom(player1, player2) {
 		//make a new room object and save on map
-		const newRoom = new Room(player1, player2);
+		const newRoom = new room(player1, player2);
 		this.gameRooms.set(newRoom.uuid, newRoom);
 		//set roomUuid on both players
 		player1.roomUuid = newRoom.uuid;

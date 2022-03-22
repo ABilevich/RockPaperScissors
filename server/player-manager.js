@@ -1,4 +1,4 @@
-const Player = require("./classes/player");
+const player = require("./classes/player");
 
 class playerManager {
 	constructor() {
@@ -43,7 +43,7 @@ class playerManager {
 	createNewPlayer(name, socketId) {
 		console.log(`Created player: ${name}`);
 		const isBot = this.checkIsBot(name);
-		const newPlayer = new Player(name, isBot, socketId);
+		const newPlayer = new player(name, isBot, socketId);
 		this.players.set(newPlayer.name, newPlayer);
 		return newPlayer;
 	}

@@ -1,6 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 
-class Room {
+class room {
 	constructor(player1, player2) {
 		this.uuid = uuidv4();
 		this.player1 = player1;
@@ -151,4 +151,4 @@ class Room {
 		return false;
 	}
 }
-module.exports = Room;
+module.exports = room;

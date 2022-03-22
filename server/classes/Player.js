@@ -1,4 +1,4 @@
-class Player {
+class player {
 	constructor(name, isBot, socketId) {
 		this.name = name;
 		this.timePlayed = 0;
@@ -17,4 +17,4 @@ class Player {
 		return this.timePlayed + this.winCount * 10 + this.winStreak * 20;
 	}
 }
-module.exports = Player;
+module.exports = player;

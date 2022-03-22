@@ -8,7 +8,7 @@ class Node {
 }
 
 //this binary searchi Tree was modified so that each node has an array of all the players with the same elo
-class BSTQueue {
+class bstQueue {
 	constructor() {
 		this.root = null;
 	}
@@ -236,4 +236,4 @@ class BSTQueue {
 	}
 }
 
-module.exports = BSTQueue;
+module.exports = bstQueue;
